@@ -1,0 +1,76 @@
+		Node: 0/0/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                               1085805373         217
+ 777  ARP_EXCD                                                4392           0
+ 778  RARP                                                      61           0
+Show global stats counters for NP1, revision v2
+ 776  ARP                                               1085058288         215
+ 777  ARP_EXCD                                                1269           0
+Show global stats counters for NP2, revision v2
+Show global stats counters for NP3, revision v2
+ 776  ARP                                               1100310939         222
+ 777  ARP_EXCD                                                1762           0
+		Node: 0/1/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                                   641607           0
+ 777  ARP_EXCD                                               19900           0
+Show global stats counters for NP1, revision v2
+Show global stats counters for NP2, revision v2
+ 776  ARP                                                   271704           0
+Show global stats counters for NP3, revision v2
+ 776  ARP                                                   269715           0
+		Node: 0/2/CPU0:
+Show global stats counters for NP0, revision v2
+Show global stats counters for NP1, revision v2
+ 776  ARP                                                      539           0
+		Node: 0/3/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                                   598168           0
+ 777  ARP_EXCD                                                   9           0
+Show global stats counters for NP1, revision v2
+ 776  ARP                                                      538           0
+		Node: 0/4/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                                   443068           0
+ 777  ARP_EXCD                                                9462           0
+Show global stats counters for NP1, revision v2
+ 776  ARP                                                   317757           0
+		Node: 0/5/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                                993681551         140
+ 777  ARP_EXCD                                                1514           0
+Show global stats counters for NP1, revision v2
+ 776  ARP                                               1789732651         288
+ 777  ARP_EXCD                                                3357           0
+		Node: 0/6/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                                757496651         171
+ 777  ARP_EXCD                                                  31           0
+Show global stats counters for NP1, revision v2
+ 776  ARP                                               1653605229         373
+ 777  ARP_EXCD                                               31023           0
+ 778  RARP                                                     238           0
+		Node: 0/7/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                                      152           0
+Show global stats counters for NP1, revision v2
+		Node: 0/8/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                                724959485           0
+ 777  ARP_EXCD                                               26827           0
+Show global stats counters for NP1, revision v2
+		Node: 0/9/CPU0:
+Show global stats counters for NP0, revision v2
+Show global stats counters for NP1, revision v2
+		Node: 0/10/CPU0:
+Show global stats counters for NP0, revision v2
+ 776  ARP                                               1063323256         106
+ 777  ARP_EXCD                                                2600           0
+ 778  RARP                                                       4           0
+Show global stats counters for NP1, revision v2
+ 776  ARP                                                 55639876         109
+Show global stats counters for NP2, revision v2
+ 776  ARP                                               1067354994         111
+ 777  ARP_EXCD                                                2584           0
+ 778  RARP                                                       9           0
+Show global stats counters for NP3, revision v2
