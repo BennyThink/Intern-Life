@@ -69,8 +69,8 @@ security:
 #restart MongoDB
 service mongod restart
 ```
-###import data to MySQL
-`mysql -u root -p db1 < test.sql`
+### import data to MySQL
+`mysql -u root -p pass db1 < test.sql`
 
 
 ## Errors
