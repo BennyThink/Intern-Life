@@ -9,8 +9,7 @@ import mysql.connector
 from pymongo import MongoClient, errors
 import pprint
 
-
-mongo_client = MongoClient('127.0.0.1', username='root', password='***REMOVED***123',
+mongo_client = MongoClient(host='127.0.0.1', username='root', password='***REMOVED***123',
                            authMechanism='SCRAM-SHA-1')
 db = mongo_client['san']
 col = db['san_device']
@@ -43,7 +42,6 @@ def read_mysql():
 
 
 def write_mongo(data_dic):
-
     try:
         # fix solution 2: use copy() to prevent from Duplicate Key Error
         # col.insert(data_dic.copy())
