@@ -9,7 +9,7 @@ import mysql.connector
 from pymongo import MongoClient, errors
 import pprint
 
-mongo_dic = {}
+
 mongo_client = MongoClient('127.0.0.1', username='root', password='***REMOVED***123',
                            authMechanism='SCRAM-SHA-1')
 db = mongo_client['san']
@@ -25,7 +25,7 @@ def read_mysql():
     cur = con.cursor()
     cur.execute('select * from san_device')
     data = cur.fetchall()
-
+    mongo_dic = {}
     for i in range(len(data)):
         mongo_dic.update(id=data[i][0], devicename=data[i][1], domainid=data[i][2],
                          ip=data[i][3], cp0ip=data[i][4], cp1ip=data[i][5],
