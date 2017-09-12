@@ -85,3 +85,4 @@ service mongod restart
 ## Afterwards
 
 ## Notes
+* how does Pymongo generate _id? (Reference)[http://xiaoweiliu.cn/2017/06/21/pymongo-errors-DuplicateKeyError-E11000-duplicate-key-error/]

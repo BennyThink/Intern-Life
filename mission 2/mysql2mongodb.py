@@ -25,8 +25,10 @@ def read_mysql():
     cur = con.cursor()
     cur.execute('select * from san_device')
     data = cur.fetchall()
-    mongo_dic = {}
+
     for i in range(len(data)):
+        # fix solution 1: move the dic inside in order to make a new dic during each loop
+        mongo_dic = {}
         mongo_dic.update(id=data[i][0], devicename=data[i][1], domainid=data[i][2],
                          ip=data[i][3], cp0ip=data[i][4], cp1ip=data[i][5],
                          location=data[i][6], hasfillword=data[i][7],
@@ -41,13 +43,17 @@ def read_mysql():
 
 
 def write_mongo(data_dic):
+
     try:
-        # use copy() to prevent from Duplicate Key Error
-        col.insert(data_dic.copy())
+        # fix solution 2: use copy() to prevent from Duplicate Key Error
+        # col.insert(data_dic.copy())
+        col.insert(data_dic)
     except errors.PyMongoError as e:
         print 'Operation failed...', e
     else:
         print 'Operation succeed'
+    finally:
+        del data_dic
 
 
 def remove_all_document():
