@@ -18,7 +18,7 @@ class MySQL(object):
     def __init__(self, host, user, password, db):
         self.con = mysql.connector.connect(host=host, user=user, password=password, database=db)
 
-    def read_mysql(self, mongo_instance):
+    def read_mysql(self):
         cur = self.con.cursor()
         cur.execute('select * from san_device')
         data = cur.fetchall()
@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     choice = input('>')
     if choice == 1:
-        sql.read_mysql(mongo)
+        sql.read_mysql()
     elif choice == 2:
         mongo.remove_all_document()
     elif choice == 3:
