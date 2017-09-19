@@ -17,6 +17,7 @@ col = db['san_device']
 
 def read_mysql():
     # read from MySQL and  insert into MongoDB one by one
+    # the common and mostly used one should go up here.
     con = mysql.connector.connect(user='root', password='root',
                                   host='127.0.0.1',
                                   database='san')
@@ -45,13 +46,16 @@ def write_mongo(data_dic):
     try:
         # fix solution 2: use copy() to prevent from Duplicate Key Error
         # col.insert(data_dic.copy())
+        # col.insert_many() for better performance
         col.insert(data_dic)
+
     except errors.PyMongoError as e:
         print 'Operation failed...', e
     else:
         print 'Operation succeed'
-    finally:
-        del data_dic
+        # dict is like & in cpp
+        # finally:
+        #    del data_dic
 
 
 def remove_all_document():
@@ -61,8 +65,8 @@ def remove_all_document():
         print 'Operation failed...', e
     else:
         print 'Operation succeed'
-    finally:
-        mongo_client.close()
+        # finally:
+        #    mongo_client.close()
 
 
 def ip_query(ip):

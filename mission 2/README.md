@@ -3,7 +3,7 @@ Intern-Life
 
 ## Mission 
 * Accomplish on 9th Sep 2017
-* Modify on 
+* Modify on 19th Sep 2017
 * Duration: one day and a half
 
 
@@ -77,12 +77,18 @@ service mongod restart
 
 
 ## Suggestions by mentor(s)
-
+* global and mostly used vars, changable variables, please add it to the front(easy to modify).
+* try not to use `update`,use `dict(key1=value1,key2=value2)` for better performance and coding style.
+* `close` and `del` are unnecessary
+* `close` in destructor, constructor's default params.
+* dict and array act more similar to `&`(reference) in cpp
+* `col.insert_many()` for better performance
 
 ## Suggestions by myself
 
 
 ## Afterwards
+* flask web interface with `GET` method query.
 
 ## Notes
 * how does Pymongo generate _id? (Reference)[http://xiaoweiliu.cn/2017/06/21/pymongo-errors-DuplicateKeyError-E11000-duplicate-key-error/]

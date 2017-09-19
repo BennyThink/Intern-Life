@@ -25,6 +25,8 @@ class MySQL(object):
 
         for i in range(len(data)):
             # fix solution 1: move the dic inside in order to make a new dic during each loop
+            # this is better
+            # mongo_dic=dict(id=data[i][0])
             mongo_dic = {}
             mongo_dic.update(id=data[i][0], devicename=data[i][1], domainid=data[i][2],
                              ip=data[i][3], cp0ip=data[i][4], cp1ip=data[i][5],
@@ -35,6 +37,9 @@ class MySQL(object):
                              area=data[i][16], factory=data[i][17])
             mongo.mongo_write(mongo_dic)
 
+    # destructor and close connection
+    # def __del__(self):
+    #     self.con.close()
     def db_close(self):
         self.con.close()
 
@@ -42,7 +47,7 @@ class MySQL(object):
 class Mongo(object):
     mongo_client = None
     col = None
-
+    # default param
     def __init__(self, host, username, password, auth):
         self.mongo_client = MongoClient(host=host, username=username, password=password,
                                         authMechanism=auth)
@@ -55,8 +60,9 @@ class Mongo(object):
             print 'Operation failed...', e
         else:
             print 'Operation succeed'
-        finally:
-            del data_dic
+        # unnecessary, reference
+        # finally:
+        #   del data_dic
 
     def remove_all_document(self):
         try:
@@ -65,6 +71,7 @@ class Mongo(object):
             print 'Operation failed...', e
         else:
             print 'Operation succeed'
+        # same here
         finally:
             self.mongo_client.close()
 
@@ -83,6 +90,7 @@ class Mongo(object):
             for post in dn_query_result:
                 pprint.pprint(post)
 
+    # __del__
     def db_close(self):
         self.mongo_client.close()
 
