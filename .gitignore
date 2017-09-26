@@ -2,3 +2,7 @@
 mission 2/\.idea/
 
 mission 1/\.idea/
+
+*.pyc
+
+mission 3/\.idea/
