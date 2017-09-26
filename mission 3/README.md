@@ -50,4 +50,4 @@ t.start()
 ## Afterwards
 
 ## Notes
-Reference to git-like checker, with threading technique, which is much more quicker than the old one.
+Reference to [git-like checker](https://github.com/BennyThink/Overwatch/blob/master/moonBlog/checkin2.py), with threading technique, which is much more quicker than the old one.
