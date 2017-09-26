@@ -2,8 +2,8 @@ Intern-Life
 # My intern assignments in ***REMOVED***
 
 ## Mission 
-* Accomplish on 
-* Modify on 
+* Accomplished on 
+* Modified on 
 * Duration: 
 
 

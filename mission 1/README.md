@@ -2,8 +2,8 @@ Intern-Life
 # My intern assignments in ***REMOVED***
 
 ## Mission 1
-* Accomplish on 1st Sep 2017
-* Modify on 9th Sep 2017 (Only errors has been corrected)
+* Accomplished on 1st Sep 2017
+* Modified on 9th Sep 2017 (Only errors has been corrected)
 * Duration: about 1 day and two hours.
 
 

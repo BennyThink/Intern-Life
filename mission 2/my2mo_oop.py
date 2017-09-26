@@ -43,10 +43,14 @@ class MySQL(object):
     def db_close(self):
         self.con.close()
 
+    def __del__(self):
+        self.con.close()
+
 
 class Mongo(object):
     mongo_client = None
     col = None
+
     # default param
     def __init__(self, host, username, password, auth):
         self.mongo_client = MongoClient(host=host, username=username, password=password,
@@ -60,9 +64,9 @@ class Mongo(object):
             print 'Operation failed...', e
         else:
             print 'Operation succeed'
-        # unnecessary, reference
-        # finally:
-        #   del data_dic
+            # unnecessary, reference
+            # finally:
+            #   del data_dic
 
     def remove_all_document(self):
         try:
@@ -90,8 +94,29 @@ class Mongo(object):
             for post in dn_query_result:
                 pprint.pprint(post)
 
+    def get_query_everything(self, pair):
+        part = pair.split('&')
+        keys = []
+        values = []
+        res = []
+        for i in range(len(part)):
+            keys.append(part[i].split('=')[0])
+            values.append(part[i].split('=')[1])
+        r = dict(zip(keys, values))
+        query_everything_res = self.col.find(r)
+
+        if query_everything_res.count() == 0:
+            return 'No results'
+        else:
+            for post in query_everything_res:
+                res.append(post)
+        return res
+
     # __del__
     def db_close(self):
+        self.mongo_client.close()
+
+    def __del__(self):
         self.mongo_client.close()
 
 
