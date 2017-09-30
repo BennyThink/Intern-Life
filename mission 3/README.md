@@ -17,7 +17,7 @@ Intern-Life
 ### Decorator - test performance
 `from measurement import exe_time`
 ### multiprocessing technique, use Queue to communicate
-**Probably wrong**
+**He said it wrong**
 ```
 	q = Manager().Queue()
     pool = Pool()
@@ -32,7 +32,7 @@ p=Process(target=read_csv, args=(q,))
 p.start()
 ```
 ### Threading
-**Probably wrong**
+**He said it wrong**
 ```
 t = threading.Thread(target=test, args=(i,))
 t.start()
@@ -42,7 +42,8 @@ t.start()
 
 
 ## Suggestions by mentor(s)
-
+* Actually we should reference to `real_thread_multiprocessing.py` and `login_enmu.py`.
+That is the true proper use of threading and multiprocessing.
 
 ## Suggestions by myself
 

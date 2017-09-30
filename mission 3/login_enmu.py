@@ -7,26 +7,28 @@ from measurement import exe_time
 
 
 def test(i):
-    print '%s - log in emulation, ' % i,
+    # print '%s - log in emulation, ' % i,
     time.sleep(1)
-    print '+logged in'
+    # print '+logged in'
 
 
 @exe_time
-def main1():
+def normal():
     for i in range(5):
         test(i)
 
 
 @exe_time
-def main2():
+def th():
     for i in range(5):
+        global t
         t = threading.Thread(target=test, args=(i,))
         t.start()
+    t.join()
 
 
 @exe_time
-def main3():
+def pro():
     p = Pool()
     for i in range(5):
         p.apply_async(test, args=(i,))
@@ -36,8 +38,8 @@ def main3():
 
 if __name__ == '__main__':
     print '---------1-----------'
-    # main1()
+    normal()
     print '---------2-----------'
-    main2()
-    print '---------3-----------'
-    # main3()
+    th()
+    # print '---------3-----------'
+    # pro()
