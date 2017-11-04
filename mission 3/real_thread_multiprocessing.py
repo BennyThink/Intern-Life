@@ -17,8 +17,8 @@ def process(filename):
                 break
             else:
                 csv_content.append(netaddr.IPNetwork(c).cidr.__str__() + '\n')
-            # with open('test_file_result/' + filename, 'w') as f:
-            #     f.writelines(csv_content)
+                # with open('test_file_result/' + filename, 'w') as f:
+                #     f.writelines(csv_content)
 
 
 @exe_time
