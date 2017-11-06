@@ -13,8 +13,8 @@ from elasticsearch import helpers
 from measurement import exe_time
 
 SIZE = 100000
-TABLE_NAME = 'wordpress'
-COUNT = 5
+DB_NAME = 'wordpress'
+COUNT = 4
 HOST = '127.0.0.1'
 PASS = 'root'
 
@@ -71,13 +71,13 @@ def get_table(db, count):
 
 
 def delete():
-    for i in get_table(TABLE_NAME, COUNT):
+    for i in get_table(DB_NAME, COUNT):
         es.indices.delete(i[0])
 
 
 def insert():
-    for i in get_table(TABLE_NAME, COUNT):
-        bulk_read_write(TABLE_NAME, i[0])
+    for i in get_table(DB_NAME, COUNT):
+        bulk_read_write(DB_NAME, i[0])
 
 
 if __name__ == '__main__':
