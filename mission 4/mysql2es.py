@@ -11,6 +11,7 @@ import mysql.connector
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 from measurement import exe_time
+import sys
 
 SIZE = 100000
 DB_NAME = 'wordpress'
@@ -81,5 +82,11 @@ def insert():
 
 
 if __name__ == '__main__':
-    insert()
-    # delete()
+    if len(sys.argv) == 1:
+        print 'Need parameters.'
+    elif sys.argv[1] == 'delete':
+        delete()
+    elif sys.argv[1] == 'insert':
+        insert()
+    else:
+        print 'Wrong parameters.'
