@@ -19,7 +19,7 @@ COUNT = 4
 HOST = '127.0.0.1'
 PASS = 'root'
 
-es = Elasticsearch(timetout=30)
+es = Elasticsearch(timeout=30, max_retries=10, retry_on_timeout=True)
 
 
 @exe_time
