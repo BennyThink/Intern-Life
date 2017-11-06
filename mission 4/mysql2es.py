@@ -42,7 +42,7 @@ def bulk_read_write(db, tb):
             bulk_dic = []
             for j in range(len(data)):
                 es_dic = dict(zip(col_field, data[j]))
-                es_dic.update(_index=tb, _type='hey')
+                es_dic.update(_index=tb.lower(), _type='hey')
                 bulk_dic.append(es_dic)
             helpers.bulk(es, bulk_dic)
         else:
