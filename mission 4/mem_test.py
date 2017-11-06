@@ -9,13 +9,15 @@ __author__ = 'Benny <benny@bennythink.com>'
 
 import sys
 import time
+import mysql.connector
 
-s = []
+con = mysql.connector.connect(user='root', password='root',
+                              host='127.0.0.1',
+                              database='info')
+cur = con.cursor()
+cur.execute('select * from san_device')
+data = cur.fetchmany(50000)
+print (sys.getsizeof(data)+len(data) * sys.getsizeof(data[0]) )/ float(1024)/1024
 
-while 1:
-    if sys.getsizeof(s) / 1024 / 1024 > 100:
-        break
-    else:
-        s.append(' ')
-
+#print sys.getsizeof(data[0])
 time.sleep(30)
