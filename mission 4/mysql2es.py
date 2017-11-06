@@ -13,7 +13,7 @@ from elasticsearch import helpers
 from measurement import exe_time
 import sys
 
-SIZE = 10000
+SIZE = 50000
 DB_NAME = 'wordpress'
 COUNT = 4
 HOST = '127.0.0.1'
@@ -32,9 +32,11 @@ def bulk_read_write(db, tb):
     """
     con = mysql.connector.connect(user='root', password=PASS,
                                   host=HOST,
-                                  database=db)
+                                  database=db, connection_timeout=30)
     cur = con.cursor()
     cur.execute("SET GLOBAL max_allowed_packet=1073741824")
+    cur.execute('SET GLOBAL CONNECT_TIMEOUT = 60')
+    cur.execute('SET SESSION NET_READ_TIMEOUT = 600')
     # SQL Injection. but however the format %s param doesn't work. How so???
     cur.execute('SHOW  COLUMNS from %s' % tb)
     col_data = cur.fetchall()
