@@ -12,14 +12,9 @@ from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 from measurement import exe_time
 import sys
+from config import SIZE, DB_NAME, COUNT, HOST, PASS
 
-SIZE = 50000
-DB_NAME = 'wordpress'
-COUNT = 4
-HOST = '127.0.0.1'
-PASS = 'root'
-
-es = Elasticsearch(timeout=30, max_retries=10, retry_on_timeout=True)
+es = Elasticsearch(timeout=300, max_retries=100, retry_on_timeout=True)
 
 
 @exe_time
@@ -32,11 +27,11 @@ def bulk_read_write(db, tb):
     """
     con = mysql.connector.connect(user='root', password=PASS,
                                   host=HOST,
-                                  database=db, connection_timeout=30)
+                                  database=db, connection_timeout=600)
     cur = con.cursor()
     cur.execute("SET GLOBAL max_allowed_packet=1073741824")
-    cur.execute('SET GLOBAL CONNECT_TIMEOUT = 60')
-    cur.execute('SET SESSION NET_READ_TIMEOUT = 600')
+    cur.execute('SET GLOBAL CONNECT_TIMEOUT = 600')
+    cur.execute('SET SESSION NET_READ_TIMEOUT = 6000')
     # SQL Injection. but however the format %s param doesn't work. How so???
     cur.execute('SHOW  COLUMNS from %s' % tb)
     col_data = cur.fetchall()
@@ -71,7 +66,10 @@ def get_table(db, count):
                                   database='information_schema')
     cur = con.cursor()
     cur.execute('SELECT TABLE_NAME FROM tables WHERE table_schema = %s ORDER BY DATA_LENGTH DESC LIMIT %s', (db, count))
-    return cur.fetchall()
+    data = cur.fetchall()
+    cur.close()
+    con.close()
+    return data
 
 
 def delete():
@@ -81,6 +79,7 @@ def delete():
 
 def insert():
     for i in get_table(DB_NAME, COUNT):
+        print '-----%s-----' % i[0]
         bulk_read_write(DB_NAME, i[0])
 
 
