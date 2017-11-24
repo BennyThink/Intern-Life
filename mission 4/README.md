@@ -33,14 +33,18 @@ dd
 ee
 (1, 2, 3)
 ```
-try not to set ``` cur.execute("SET GLOBAL max_allowed_packet=1073741824")
+try not to set 
+``` cur.execute("SET GLOBAL max_allowed_packet=1073741824")
     cur.execute('SET GLOBAL CONNECT_TIMEOUT = 600')
-    cur.execute('SET SESSION NET_READ_TIMEOUT = 6000')```
+    cur.execute('SET SESSION NET_READ_TIMEOUT = 6000')
+```
 
 reduce line sent each time.
 ## Suggestions by myself
-
+reduce lines of code, try to reuse code.
 
 ## Afterwards
-
+Kick boolean false key-value from dict.
+What would happen if I pop values in for loop?
 ## Notes
+2013, 10.

@@ -20,15 +20,15 @@ def recursive(var):
     :param var: str,float,unicode,int,list and tuple only.
     :return: size in bytes.
     """
-
-    if isinstance(var, (int, float, unicode, str)):
-        return sys.getsizeof(var)
-
-    else:
-        size = sys.getsizeof(var)
-        for i in var:
-            size += recursive(i)
-        return size
+    size = sys.getsizeof(var)
+    if not isinstance(var, (int, float, unicode, str)):
+        if isinstance(var, dict):
+            for key in var:
+                size += recursive(var[key])
+        else:
+            for item in var:
+                size += recursive(item)
+    return size
 
 
 def test():
