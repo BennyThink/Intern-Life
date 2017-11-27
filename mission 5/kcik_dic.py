@@ -36,12 +36,8 @@ sample = {
     "delete3": {},
     "list1": {'hahah': 'hey', 'delete1': None},
     "list2": [],
-    "list3": [1, 2, 3, 4, {'tobe': 'tobe', 'delete2': None}]
+    "list3": [1, 2, 3, 4, {'tobe': 'tobe', 'delete2': None, '099': [{'321': '222', 'delete99': ''}]}]
 }
-
-
-# value is list -> dict , wrong.
-
 
 
 def parse(json_dict):
@@ -60,7 +56,6 @@ def parse(json_dict):
         elif not json_dict[key]:
             json_dict.pop(key)
 
-    # print '?? ', json_dict
     return json_dict
 
 
