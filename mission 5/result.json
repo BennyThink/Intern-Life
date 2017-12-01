@@ -1,40 +1,73 @@
 {
-  'note': {
-    'test4': 'hello',
-    'test5': 1
-  },
-  'false_None': 'None',
-  'what': 2017,
-  'list1': {
-    'hahah': 'hey'
-  },
-  'list2': [],
-  'data': {
-    'area_id': '100000',
-    'region_id': '110000',
-    'city_id': '110000',
-    'ip': '210.75.225.254',
-    'county_id': '-1',
-    'city': '\\u5317\\u4eac\\u5e02',
-    'area': '\\u534e\\u5317',
-    'country': '\\u4e2d\\u56fd',
-    'region': '\\u5317\\u4eac\\u5e02',
-    'isp': '\\u7535\\u4fe1',
-    'country_id': '86',
-    'isp_id': '100017'
-  },
-  'list3': [
-    1,
-    2,
-    3,
-    4,
+  'codeDesc': 'Success',
+  'totalCount': 14,
+  'instanceSet': [
     {
-      'tobe': 'tobe',
-      '099': [
-        {
-          '321': '222'
-        }
-      ]
+      'instanceId': 'qcvmfd57f3113bc6fd6f0c8ce381f5433539',
+      'unImgId': 'img-0vbqvzfn',
+      'imageId': 6,
+      'bandwidth': 1,
+      'deviceClass': 'VSELF',
+      'diskInfo': {
+        'rootType': 2,
+        'rootId': 'disk-4rnslbwq',
+        'rootSize': 50
+      },
+      'uuid': '9bd7331d-fb7d-4013-bcb1-65a0d4b46873',
+      'wanIpSet': [
+        '123.207.32.83'
+      ],
+      'lanIp': '10.104.37.58',
+      'cvmPayMode': 1,
+      'zoneId': 100002,
+      'instanceName': '3\xe6\x97\xa5\xe6\xb5\x8b\xe8\xaf\x95\xe9\x95\x9c\xe5\x83\x8f',
+      'imageType': '\xe5\x85\xac\xe6\x9c\x89\xe9\x95\x9c\xe5\x83\x8f',
+      'status': 4,
+      'mem': 1,
+      'Region': 'gz',
+      'networkPayMode': 2,
+      'unInstanceId': 'ins-gsbuwc26',
+      'createTime': '2016-12-02 00:22:40',
+      'zoneName': '\xe5\xb9\xbf\xe5\xb7\x9e\xe4\xba\x8c\xe5\x8c\xba',
+      'cpu': 1,
+      'statusTime': '2016-12-02 12:28:09',
+      'os': 'Xserver V8.1_64',
+      'deadlineTime': '2017-01-02 00:22:48'
+    },
+    {
+      'instanceId': 'qcvm0c7dca6b0244fde9b36d7cbc986274a5',
+      'unImgId': 'img-31tjrtph',
+      'imageId': 53,
+      'bandwidth': 1,
+      'deviceClass': 'VSELF_2',
+      'diskInfo': {
+        'rootId': 'disk-hq2agvi8',
+        'storageSize': 100,
+        'rootType': 2,
+        'storageType': 2,
+        'storageId': 'disk-fegdogdg',
+        'rootSize': 50
+      },
+      'uuid': 'a952c786-a1ee-4d0a-8c45-2640ea70e704',
+      'wanIpSet': [
+        '123.207.115.47'
+      ],
+      'lanIp': '10.104.249.153',
+      'cvmPayMode': 1,
+      'zoneId': 100003,
+      'instanceName': 'jupyter',
+      'imageType': '\xe5\x85\xac\xe6\x9c\x89\xe9\x95\x9c\xe5\x83\x8f',
+      'status': 2,
+      'mem': 16,
+      'Region': 'gz',
+      'networkPayMode': 1,
+      'unInstanceId': 'ins-r8hr2upy',
+      'createTime': '2016-11-24 09:22:18',
+      'zoneName': '\xe5\xb9\xbf\xe5\xb7\x9e\xe4\xb8\x89\xe5\x8c\xba',
+      'cpu': 8,
+      'statusTime': '2016-11-30 10:48:24',
+      'os': 'centos7.2x86_64',
+      'deadlineTime': '2017-01-24 09:22:25'
     }
   ]
 }
