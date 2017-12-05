@@ -131,7 +131,7 @@ if __name__ == '__main__':
     print '---------------------------------------------'
 
     sql = MySQL('127.0.0.1', 'root', 'root', 'san')
-    mongo = Mongo('127.0.0.1', 'root', '***REMOVED***123', 'SCRAM-SHA-1')
+    mongo = Mongo('127.0.0.1', 'root', 'xxx123', 'SCRAM-SHA-1')
 
     choice = input('>')
     if choice == 1:

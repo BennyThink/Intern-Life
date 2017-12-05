@@ -9,7 +9,7 @@ import mysql.connector
 from pymongo import MongoClient, errors
 import pprint
 
-mongo_client = MongoClient(host='127.0.0.1', username='root', password='***REMOVED***123',
+mongo_client = MongoClient(host='127.0.0.1', username='root', password='xxx123',
                            authMechanism='SCRAM-SHA-1')
 db = mongo_client['san']
 col = db['san_device']

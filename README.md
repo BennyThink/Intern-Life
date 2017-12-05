@@ -1,5 +1,5 @@
 Intern-Life
-# My intern assignments in ***REMOVED***
+# My intern assignments at XXX.
 
 ## Mission 
 * Accomplished on 

@@ -9,7 +9,7 @@ import my2mo_oop
 
 app = Flask(__name__)
 
-mongo = my2mo_oop.Mongo('127.0.0.1', 'root', '***REMOVED***123', 'SCRAM-SHA-1')
+mongo = my2mo_oop.Mongo('127.0.0.1', 'root', 'xxx123', 'SCRAM-SHA-1')
 
 
 @app.route('/san_device')

@@ -1,5 +1,5 @@
 Intern-Life
-# My intern assignments in ***REMOVED***
+# My intern assignments at XXX
 
 ## Mission 
 * Accomplished on 9th Sep 2017
@@ -53,7 +53,7 @@ use admin
 db.createUser(
 {
 user: "root",
-pwd: "***REMOVED***123",
+pwd: "xxx123",
 roles: [ { role: "root", db: "admin" } ]
 }
 )

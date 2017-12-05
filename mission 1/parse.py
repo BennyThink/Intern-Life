@@ -9,7 +9,7 @@ db = MySQLdb.connect("127.0.0.1", "root", "root", "test")
 cur = db.cursor()
 
 # each item of file_list is a file name, not absolute path!!
-file_list = [item for item in os.listdir(r'C:\Users\***REMOVED***\PycharmProjects\mission-1') if 'csv' in item]
+file_list = [item for item in os.listdir(r'C:\Users\Benny\PycharmProjects\mission-1') if 'csv' in item]
 
 for i in range(len(file_list)):
     file1 = open(file_list[i], 'r')

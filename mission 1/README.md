@@ -1,5 +1,5 @@
 Intern-Life
-# My intern assignments in ***REMOVED***
+# My intern assignments at XXX
 
 ## Mission 1
 * Accomplished on 1st Sep 2017
