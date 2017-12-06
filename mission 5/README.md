@@ -8,7 +8,7 @@ Intern-Life
 
 
 ## Description
-kick boolean false key-value in dict. Recursive.
+
 
 ## Steps
 

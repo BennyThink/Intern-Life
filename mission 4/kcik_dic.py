@@ -3,7 +3,7 @@
 
 # Intern-Life - kcik_dic_file.py
 # 2017/11/24 16:35
-# 
+# kick boolean false key-value in dict. Recursive.
 
 __author__ = 'Benny <benny@bennythink.com>'
 
@@ -29,6 +29,7 @@ sample = {
     "note": {
         "delete0": '',
         "delete5": {},
+        "no delete5": [1, 2],
         "test4": "hello",
         "test5": 1
     },
@@ -148,4 +149,4 @@ def parse(json_dict):
 
 if __name__ == '__main__':
     with open('result.json', 'w') as f:
-        f.write(str(parse(qcloud)))
+        f.write(str(parse(sample)))
