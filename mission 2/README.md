@@ -72,7 +72,8 @@ service mongod restart
 ### import data to MySQL
 `mysql -u root -p pass db1 < test.sql`
 
-
+### iptables
+iptables -I INPUT -p tcp --dport 9116 -j ACCEPT
 ## Errors
 
 
