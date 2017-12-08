@@ -93,3 +93,4 @@ iptables -I INPUT -p tcp --dport 9116 -j ACCEPT
 
 ## Notes
 * how does Pymongo generate _id? (Reference)[http://xiaoweiliu.cn/2017/06/21/pymongo-errors-DuplicateKeyError-E11000-duplicate-key-error/]
+* binary install, not systemd, probably `supervisor` is the best choice.
