@@ -22,15 +22,15 @@ Intern-Life
 Due to network issues, decided to build from source. `lnmp.org` one key script.
 ### install MongoDB(from [official repository](https://docs.mongodb.com/master/tutorial/install-mongodb-on-red-hat/))
 ```
-vim /etc/yum.repos.d/mongodb-org-3.4.repo
+vim /etc/yum.repos.d/mongodb-org-3.6.repo
 
 #write the following content
-[mongodb-org-3.4]
+[mongodb-org-3.6]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/3.6/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
 
 #install MongoDB
 yum install -y mongodb-org
