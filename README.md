@@ -8,9 +8,6 @@ Intern-Life
 
 
 ## Description
-10.79.148.228
-Supervisor:
-`/home/anaconda2/bin/python /home/project/WebTerminal/main.py`
 
 ## Steps
 
