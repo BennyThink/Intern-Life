@@ -42,8 +42,15 @@ usage:`proxychains4 yum install package-name`
 
 
 ## Suggestions by mentor(s)
-
-
+nginx reverse proxy
+```
+location /test 
+{
+    proxy_pass http://127.0.0.1:5000/;
+}
+```
+PTR
+`dig x 1.2.3.4`
 ## Suggestions by myself
 
 
