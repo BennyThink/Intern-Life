@@ -16,21 +16,27 @@
 
 
     function del(btn) {
-        var info = btn.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].textContent;
 
-        console.log(info);
 
-        //返回的数据放在data中，返回状态放在status
-        $.post("/delete", {message: info}, function (data, status) {
-            if (status == "success") {
-                $("#result").html(data);
-            }
-            else {
-                alert("Ajax 失败");
-            }
-        });
-        location.reload(true);
+        var r = confirm("确认删除？");
+        if (r == false) {
+            return;
+        }
+        else {
+            var info = btn.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].textContent;
 
+            //返回的数据放在data中，返回状态放在status
+            $.post("/delete", {message: info}, function (data, status) {
+                if (status == "success") {
+                    $("#result").html(data);
+                }
+                else {
+                    alert("Ajax 失败");
+                }
+            });
+            location.reload(true);
+
+        }
     }
 
 
