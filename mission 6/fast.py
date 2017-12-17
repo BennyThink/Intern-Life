@@ -17,11 +17,7 @@ con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', da
 cur = con.cursor()
 
 
-class Index(tornado.web.RequestHandler):
-
-    def get(self):
-        self.render('main.html', item=get_data())
-
+class Create(tornado.web.RequestHandler):
     def post(self, *args, **kwargs):
         col1 = self.get_argument('col1')
         col2 = self.get_argument('col2')
@@ -30,16 +26,36 @@ class Index(tornado.web.RequestHandler):
         col5 = self.get_argument('col5')
         col6 = self.get_argument('col6')
         col7 = self.get_argument('col7')
-        sql = 'insert into test VALUES (%s,%s,%s,%s,%s,%s,%s)'
-        cur.execute(sql, (col1, col2, col3, col4, col5, col6, col7,))
-        con.commit()
+        # insert or update?
+        sql = 'select * from test where name="%s"' % col1
+        cur.execute(sql)
+        data = cur.fetchall()
+        if data:
+            print 'update'
+            sql = 'UPDATE test SET ip = "%s", vendor = "%s", platform = "%s", hardware = "%s", version = "%s", \
+            lable = "%s" WHERE name = "%s"' % (col2, col3, col4, col5, col6, col7, col1)
+            cur.execute(sql)
+            con.commit()
+        else:
+            print 'insert'
+            sql = 'insert into test VALUES (%s,%s,%s,%s,%s,%s,%s)'
+            cur.execute(sql, (col1, col2, col3, col4, col5, col6, col7,))
+            con.commit()
         self.redirect('/')
 
 
-class Post(tornado.web.RequestHandler):
+class Retreive(tornado.web.RequestHandler):
 
+    def get(self):
+        self.render('main.html', item=get_data())
+
+
+class Delete(tornado.web.RequestHandler):
     def post(self, *args, **kwargs):
-        print self.get_argument('col1')
+        col1 = self.get_argument('message')
+        cur.execute('delete from test WHERE name="%s"' % col1)
+        con.commit()
+        self.redirect('/')
 
 
 settings = {'template_path': 'templates', 'debug': 'true',
@@ -47,7 +63,11 @@ settings = {'template_path': 'templates', 'debug': 'true',
 
 
 def make_app():
-    return tornado.web.Application([(r'/', Index), (r'/test', Post)], **settings)
+    return tornado.web.Application([(r'/create', Create),
+                                    (r'/', Retreive),
+
+                                    (r'/delete', Delete)],
+                                   **settings)
 
 
 def get_data():

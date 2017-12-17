@@ -1,6 +1,40 @@
 {% extends 'base.html'%}
 
 {%block body%}
+<script>
+
+
+    function test(btn) {
+        var info = btn.parentNode.parentNode.parentNode.getElementsByTagName('td');//[0].textContent;
+
+        for (var i = 0; i < 7; i++) {
+            document.getElementsByName('col' + (i + 1))[0].value = info[i].textContent;
+
+        }
+        document.getElementsByName('col1')[0].disabled = true;
+    }
+
+
+    function del(btn) {
+        var info = btn.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].textContent;
+
+        console.log(info);
+
+        //返回的数据放在data中，返回状态放在status
+        $.post("/delete", {message: info}, function (data, status) {
+            if (status == "success") {
+                $("#result").html(data);
+            }
+            else {
+                alert("Ajax 失败");
+            }
+        });
+        location.reload(true);
+
+    }
+
+
+</script>
 
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -37,15 +71,14 @@
 </div>
 
 <div class="form-inline">
-    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModalAdd">添加</button>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModalAdd"
+            onclick="document.getElementsByName('col1')[0].disabled=false;">添加
+    </button>
     <button class="btn btn-primary pull-right">搜 索</button>
 
     <input type="text" class="form-control pull-right" placeholder="关键字"/>
 </div>
-<!--<div class="row">-->
-<!--<button type="button" class="btn btn-default">添加</button>-->
-<!--<input type="text" class="form-control input-lg"><span class="input-group-addon btn btn-primary">搜索</span>-->
-<!--</div>-->
+
 <div class="table-responsive">
     <table class="table">
 
@@ -62,7 +95,6 @@
         </tr>
         </thead>
         <tbody>
-
         {% for i in item%}
         <tr>
             {% for j in i%}
@@ -73,8 +105,10 @@
 
                 <div class="btn-group btn-group-xs">
 
-                    <button type="button" class="btn btn-default">修改</button>
-                    <button type="button" class="btn btn-default">删除</button>
+                    <button type="button" class="btn btn-default" id="update" data-toggle="modal"
+                            data-target="#myModalAdd" onclick="test(this)">修改
+                    </button>
+                    <button type="button" class="btn btn-default" onclick="del(this)">删除</button>
                 </div>
             </td>
         </tr>
@@ -86,7 +120,7 @@
 </div>
 
 
-<!-- 模态框（Modal） -->
+<!-- 模态框（Modal）2 -->
 <div class="modal fade" id="myModalAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -101,7 +135,7 @@
             <div class="modal-body">
 
 
-                <form id="myaddform" method="post">
+                <form id="myaddform" method="post" action="/create">
                     <div class="form-inline">
                         列1&nbsp;<input type="text" class="form-control" name="col1"/>
                         列2&nbsp;<input type="text" class="form-control" name="col2"/>
@@ -135,8 +169,5 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 
+
     {%end%}
-    <script>
-
-
-    </script>
