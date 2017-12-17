@@ -1,0 +1,90 @@
+{% extends 'base.html'%}
+
+{%block body%}
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Brand</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Link1 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#page">Link2</a></li>
+
+            </ul>
+
+        </div><!-- /.navbar-collapse -->
+    </div>
+</nav>
+
+<div class="jumbotron">
+    <div class="container">
+        <h1>Hello, world!</h1>
+        <p>What...?</p>
+        <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p></div>-->
+    </div>
+</div>
+
+<div class="form-inline">
+    <button type="button" class="btn btn-default">添加</button>
+    <button class="btn btn-primary pull-right">搜 索</button>
+
+    <input type="text" class="form-control pull-right" placeholder="关键字"/>
+</div>
+<!--<div class="row">-->
+<!--<button type="button" class="btn btn-default">添加</button>-->
+<!--<input type="text" class="form-control input-lg"><span class="input-group-addon btn btn-primary">搜索</span>-->
+<!--</div>-->
+<div class="table-responsive">
+    <table class="table">
+
+        <thead>
+        <tr>
+            <th>产品</th>
+            <th>付期</th>
+            <th>状态</th>
+            <th>状态</th>
+            <th>状态</th>
+            <th>状态</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for i in item%}
+        <tr>
+            {% for j in i%}
+            <td>{{j}}</td>
+
+            {%end%}
+            <td>
+
+                <div class="btn-group btn-group-xs">
+
+                    <button type="button" class="btn btn-default">修改</button>
+                    <button type="button" class="btn btn-default">删除</button>
+                </div>
+            </td>
+        </tr>
+        {%end%}
+        </tbody>
+
+
+    </table>
+</div>
+
+
+{%end%}
