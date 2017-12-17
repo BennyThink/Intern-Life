@@ -2,7 +2,6 @@
 
 {%block body%}
 
-
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -38,7 +37,7 @@
 </div>
 
 <div class="form-inline">
-    <button type="button" class="btn btn-default">添加</button>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModalAdd">添加</button>
     <button class="btn btn-primary pull-right">搜 索</button>
 
     <input type="text" class="form-control pull-right" placeholder="关键字"/>
@@ -52,13 +51,13 @@
 
         <thead>
         <tr>
-            <th>产品</th>
-            <th>付期</th>
-            <th>状态</th>
-            <th>状态</th>
-            <th>状态</th>
-            <th>状态</th>
-            <th>状态</th>
+            <th>列1</th>
+            <th>列2</th>
+            <th>列3</th>
+            <th>列4</th>
+            <th>列5</th>
+            <th>列6</th>
+            <th>列7</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -87,4 +86,57 @@
 </div>
 
 
-{%end%}
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModalAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加信息
+                </h4>
+            </div>
+            <div class="modal-body">
+
+
+                <form id="myaddform" method="post">
+                    <div class="form-inline">
+                        列1&nbsp;<input type="text" class="form-control" name="col1"/>
+                        列2&nbsp;<input type="text" class="form-control" name="col2"/>
+                    </div>
+                    <br>
+                    <div class="form-inline">
+                        列3&nbsp;<input type="text" class="form-control" name="col3"/>
+                        列4&nbsp;<input type="text" class="form-control" name="col4"/>
+                    </div>
+                    <br>
+                    <div class="form-inline">
+                        列5&nbsp;<input type="text" class="form-control" name="col5"/>
+                        列6&nbsp;<input type="text" class="form-control" name="col6"/>
+                    </div>
+                    <br>
+                    <div class="form-inline">
+                        列7&nbsp;<input type="text" class="form-control" name="col7"/>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            提交更改
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+    {%end%}
+    <script>
+
+
+    </script>
