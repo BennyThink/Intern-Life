@@ -11,9 +11,6 @@ import mysql.connector
 import random
 
 
-
-# cur.execute('')
-# print cur.fetchall()
 # 7 fieles
 def g():
     field = ''
