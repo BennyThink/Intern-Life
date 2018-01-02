@@ -16,7 +16,9 @@ Intern-Life
 
 
 ## Suggestions by mentor(s)
-
+* UI
+* All fields are editable, primary key hidden.
+* paginate, search, etc.
 
 ## Suggestions by myself
 
@@ -24,3 +26,4 @@ Intern-Life
 ## Afterwards
 
 ## Notes
+* vue, element(s)
