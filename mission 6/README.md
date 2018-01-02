@@ -16,7 +16,10 @@ Tornado with Bootstrap, manipulate database.
 
 
 ## Suggestions by mentor(s)
-
+* UI
+* All fields are editable, primary key hidden.
+* paginate, search, etc.
+* Rest API
 
 ## Suggestions by myself
 
