@@ -1,46 +1,7 @@
 {% extends 'base.html'%}
 
 {%block body%}
-<script>
 
-
-    function test(btn) {
-        var info = btn.parentNode.parentNode.parentNode.getElementsByTagName('td');//[0].textContent;
-
-        for (var i = 0; i < 7; i++) {
-            document.getElementsByName('col' + (i + 1))[0].value = info[i].textContent;
-
-        }
-        //document.getElementsByName('col1')[0].disabled = true;
-    }
-
-
-    function del(btn) {
-
-
-        var r = confirm("确认删除？");
-        if (r == false) {
-            return;
-        }
-        else {
-            var info = btn.parentNode.parentNode.parentNode.getElementsByTagName('td')[0].textContent;
-
-            //返回的数据放在data中，返回状态放在status
-            $.post("/delete", {message: info}, function (data, status) {
-                if (status == "success") {
-                    $("#result").html(data);
-                }
-                else {
-                    alert("Ajax 失败");
-                }
-            });
-            location.reload(true);
-
-        }
-    }
-
-
-</script>
 
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+
+    <!-- Latest compiled and minified Locales -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+</head>
+<body>
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Brand</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Link1 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#page">Link2</a></li>
+
+            </ul>
+
+        </div><!-- /.navbar-collapse -->
+    </div>
+</nav>
+
+<div class="jumbotron">
+    <div class="container">
+        <h1>Hello, world!</h1>
+        <p>What...?</p>
+        <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p></div>-->
+    </div>
+</div>
+
+
+<div id="toolbar">
+    <button id="create" class="btn btn-default">
+        添加
+    </button>
+</div>
+
+
+<table id="table"
+       data-toolbar="#toolbar"
+       data-search="true"
+       data-show-refresh="true"
+       data-pagination="true"
+       data-id-field="id"
+       data-page-list="[10, 25, 50, 100, ALL]"
+       data-show-footer="false"
+       data-side-pagination="client">
+</table>
+
+
+<div id="modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" name="name" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label>Stars</label>
+                    <input type="number" class="form-control" name="stargazers_count" placeholder="Stars">
+                </div>
+                <div class="form-group">
+                    <label>Forks</label>
+                    <input type="number" class="form-control" name="forks_count" placeholder="Forks">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" class="form-control" name="description" placeholder="Description">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary submit">Submit</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+</body>
+
+<script>
+
+    $('#table').bootstrapTable({
+        columns: [{
+            field: 'id',
+            title: 'Item ID',
+            sortable: true
+
+        }, {
+            field: 'name',
+            title: 'Name',
+            sortable: true
+
+        }, {
+            field: 'ip',
+            title: 'IP',
+            sortable: true
+        }, {
+            field: 'platform',
+            title: 'Platform',
+            sortable: true
+        }, {
+            field: 'hardware',
+            title: 'Hardware',
+            sortable: true
+        }]
+
+    });
+</script>
+
+
+<script>
+
+
+    $.ajax({
+        type: 'GET',
+        url: 'http://127.0.0.1:8888/list/',
+        dataType: 'json',
+        cache: false,
+        crossDomain: true,
+        success: function (data) {
+
+            $("#table").bootstrapTable('load', data);
+
+        }
+    });
+
+
+</script>
+
+
+<script>
+
+    $('#create').click(function () {
+        console.log(222);
+        $('#modal').modal('show');
+
+    });
+
+
+</script>
+
+</html>

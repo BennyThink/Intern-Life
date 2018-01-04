@@ -12,50 +12,22 @@ import tornado.web
 import tornado.autoreload
 import os
 import mysql.connector
+import json
 
 con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', database='front')
 cur = con.cursor()
 
 
-class Create(tornado.web.RequestHandler):
-    def post(self, *args, **kwargs):
-        col1 = self.get_argument('col1')
-        col2 = self.get_argument('col2')
-        col3 = self.get_argument('col3')
-        col4 = self.get_argument('col4')
-        col5 = self.get_argument('col5')
-        col6 = self.get_argument('col6')
-        col7 = self.get_argument('col7')
-        # insert or update?
-        sql = 'select * from test where name="%s"' % col1
-        cur.execute(sql)
-        data = cur.fetchall()
-        if data:
-            print 'update'
-            sql = 'UPDATE test SET ip = "%s", vendor = "%s", platform = "%s", hardware = "%s", version = "%s", \
-            lable = "%s" WHERE name = "%s"' % (col2, col3, col4, col5, col6, col7, col1)
-            cur.execute(sql)
-            con.commit()
-        else:
-            print 'insert'
-            sql = 'insert into test VALUES (%s,%s,%s,%s,%s,%s,%s)'
-            cur.execute(sql, (col1, col2, col3, col4, col5, col6, col7,))
-            con.commit()
-        self.redirect('/')
-
-
 class Retreive(tornado.web.RequestHandler):
 
     def get(self):
-        self.render('main.html', item=get_data())
+        self.write(get_data())
 
 
-class Delete(tornado.web.RequestHandler):
-    def post(self, *args, **kwargs):
-        col1 = self.get_argument('message')
-        cur.execute('delete from test WHERE name="%s"' % col1)
-        con.commit()
-        self.redirect('/')
+class Index(tornado.web.RequestHandler):
+
+    def get(self):
+        self.render('index.html')
 
 
 settings = {'template_path': 'templates', 'debug': 'true',
@@ -63,18 +35,17 @@ settings = {'template_path': 'templates', 'debug': 'true',
 
 
 def make_app():
-    return tornado.web.Application([(r'/create', Create),
-                                    (r'/', Retreive),
-
-                                    (r'/delete', Delete)],
-                                   **settings)
+    return tornado.web.Application([
+        (r'/list/', Retreive),
+        (r'/', Index),
+    ],
+        **settings)
 
 
 def get_data():
-    cur.execute('select * from test')
-    data = cur.fetchall()
-    # con.close()
-    return data
+    with open('test.json', 'r') as f:
+        data = f.read()
+    return json.loads(data)
 
 
 if __name__ == '__main__':
