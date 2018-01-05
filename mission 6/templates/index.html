@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>这是什么？</title>
     <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 
     <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
@@ -37,14 +37,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Brand</a>
+            <a class="navbar-brand" href="#">Cisco</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Link1 <span class="sr-only">(current)</span></a></li>
-                <li><a href="#page">Link2</a></li>
+                <li class="active"><a href="#">ヾ(≧▽≦*)o<span class="sr-only">(current)</span></a></li>
+                <li><a href="javascript:">φ(*￣0￣)</a></li>
 
             </ul>
 
@@ -54,8 +54,8 @@
 
 <div class="jumbotron">
     <div class="container">
-        <h1>Hello, world!</h1>
-        <p>What...?</p>
+        <h1>:(){ :|:& };:</h1>
+        <p>🍴这💣是🍴一💣只🍴可💣爱🍴的💣炸🍴弹💣</p>
         <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p></div>-->
     </div>
 </div>
@@ -67,18 +67,22 @@
     </button>
 </div>
 
-
-<table id="table"
-       data-toolbar="#toolbar"
+<table id="table" data-toggle="table"
        data-search="true"
-       data-show-refresh="true"
        data-pagination="true"
-       data-id-field="id"
-       data-page-list="[10, 25, 50, 100, ALL]"
-       data-show-footer="false"
-       data-side-pagination="client">
+       data-page-list="[5, 10, 15, 20, ALL]"
+       data-show-refresh="true">
+    <thead>
+    <tr>
+        <th data-field="id" data-sortable="true">ID</th>
+        <th data-field="name" data-sortable="true">Name</th>
+        <th data-field="ip" data-sortable="true">IP</th>
+        <th data-field="platform" data-sortable="true">Platform</th>
+        <th data-field="hardware" data-sortable="true">Hardware</th>
+        <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">Action</th>
+    </tr>
+    </thead>
 </table>
-
 
 <div id="modal" class="modal fade">
     <div class="modal-dialog">
@@ -86,71 +90,136 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title"></h4>
+                <h4 class="modal-title">哎呀呀呀</h4>
             </div>
             <div class="modal-body">
+
+                <div class="form-group">
+                    <label>ID</label>
+                    <input type="text" class="form-control" name="col1">
+                </div>
+
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" name="name" placeholder="Name">
+                    <input type="text" class="form-control" name="col2">
                 </div>
+
                 <div class="form-group">
-                    <label>Stars</label>
-                    <input type="number" class="form-control" name="stargazers_count" placeholder="Stars">
+                    <label>IP</label>
+                    <input type="text" class="form-control" name="col3">
                 </div>
+
                 <div class="form-group">
-                    <label>Forks</label>
-                    <input type="number" class="form-control" name="forks_count" placeholder="Forks">
+                    <label>Platform</label>
+                    <input type="text" class="form-control" name="col4">
                 </div>
+
                 <div class="form-group">
-                    <label>Description</label>
-                    <input type="text" class="form-control" name="description" placeholder="Description">
+                    <label>hardware</label>
+                    <input type="text" class="form-control" name="col5">
                 </div>
+
+
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary submit">Submit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="update" type="button" class="btn btn-primary submit" data-dismiss="modal">保存</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 
-</body>
-
-<script>
-
-    $('#table').bootstrapTable({
-        columns: [{
-            field: 'id',
-            title: 'Item ID',
-            sortable: true
-
-        }, {
-            field: 'name',
-            title: 'Name',
-            sortable: true
-
-        }, {
-            field: 'ip',
-            title: 'IP',
-            sortable: true
-        }, {
-            field: 'platform',
-            title: 'Platform',
-            sortable: true
-        }, {
-            field: 'hardware',
-            title: 'Hardware',
-            sortable: true
-        }]
-
-    });
-</script>
+<!-- 信息删除确认 -->
+<div class="modal fade" id="delcfmModel">
+    <div class="modal-dialog">
+        <div class="modal-content message_align">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body">
+                <p>您确认要删除吗？</p>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="url"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a id="delete" class="btn btn-success" data-dismiss="modal">确定</a>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 
 <script>
 
 
+    function actionFormatter(value, row, index) {
+        return [
+            '<a class="edit ml10" href="javascript:void(0)" title="Edit">',
+            '<i class="glyphicon glyphicon-edit"></i>&nbsp;',
+            '</a>',
+            '<a class="remove ml10" href="javascript:void(0)" title="Remove">',
+            '<i class="glyphicon glyphicon-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+
+    window.actionEvents = {
+
+        'click .edit': function (e, value, row, index) {
+            $('#modal').modal('show');
+
+            document.getElementsByName('col1')[0].value = row['id'];
+            document.getElementsByName('col2')[0].value = row['name'];
+            document.getElementsByName('col3')[0].value = row['ip'];
+            document.getElementsByName('col4')[0].value = row['platform'];
+            document.getElementsByName('col5')[0].value = row['hardware'];
+            $('#update').click(function () {
+                //update
+                var col1 = document.getElementsByName('col1')[0].value;
+                var col2 = document.getElementsByName('col2')[0].value;
+                var col3 = document.getElementsByName('col3')[0].value;
+                var col4 = document.getElementsByName('col4')[0].value;
+                var col5 = document.getElementsByName('col5')[0].value;
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://127.0.0.1:8888/update/',
+                    data: {col1: col1, col2: col2, col3: col3, col4: col4, col5: col5},
+                    success: function (data, status) {
+                        if (status === "success")
+                            location.reload();
+                    }
+
+                });
+
+
+            })
+
+        },
+        'click .remove': function (e, value, row, index) {
+            $('#delcfmModel').modal(0);
+            $('#delete').click(function () {
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://127.0.0.1:8888/delete/',
+                    data: {col1: row['id']},
+                    success: function (data, status) {
+                        if (status === "success")
+                            location.reload();
+                    }
+
+                });
+
+            })
+        }
+    };
+
+
+    //list
     $.ajax({
         type: 'GET',
         url: 'http://127.0.0.1:8888/list/',
@@ -165,18 +234,38 @@
     });
 
 
-</script>
-
-
-<script>
-
     $('#create').click(function () {
-        console.log(222);
         $('#modal').modal('show');
+
+        $('#update').click(function () {
+            //新增
+            var col1 = document.getElementsByName('col1')[0].value;
+            var col2 = document.getElementsByName('col2')[0].value;
+            var col3 = document.getElementsByName('col3')[0].value;
+            var col4 = document.getElementsByName('col4')[0].value;
+            var col5 = document.getElementsByName('col5')[0].value;
+            $.ajax({
+                type: 'POST',
+                url: 'http://127.0.0.1:8888/add/',
+                data: {col1: col1, col2: col2, col3: col3, col4: col4, col5: col5},
+
+                success: function (data, status) {
+                    if (status === "success")
+                        location.reload();
+                }
+
+            });
+
+        })
+
 
     });
 
+    //$('<div>').appendTo('body').addClass('alert alert-success').html('操作成功').show().delay(1500).fadeOut();
 
 </script>
+
+
+</body>
 
 </html>
