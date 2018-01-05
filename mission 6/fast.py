@@ -10,6 +10,7 @@ __author__ = 'Benny <benny@bennythink.com>'
 import tornado.ioloop
 import tornado.web
 import tornado.autoreload
+import tornado.escape
 import os
 import mysql.connector
 import json
@@ -25,11 +26,11 @@ class Create(tornado.web.RequestHandler):
 
     def post(self):
         cmd = "INSERT INTO test VALUES (%s,%s,%s,%s,%s)"
-        col1 = self.get_argument('col1')
-        col2 = self.get_argument('col2')
-        col3 = self.get_argument('col3')
-        col4 = self.get_argument('col4')
-        col5 = self.get_argument('col5')
+        col1 = escape(self.get_argument('col1'))
+        col2 = escape(self.get_argument('col2'))
+        col3 = escape(self.get_argument('col3'))
+        col4 = escape(self.get_argument('col4'))
+        col5 = escape(self.get_argument('col5'))
         cur.execute(cmd, (col1, col2, col3, col4, col5))
         con.commit()
         self.redirect('/')
@@ -48,11 +49,11 @@ class Update(tornado.web.RequestHandler):
 
     def post(self):
         cmd = "UPDATE test SET name=%s,ip=%s,platform=%s,hardware=%s WHERE id=%s"
-        col1 = self.get_argument('col1')
-        col2 = self.get_argument('col2')
-        col3 = self.get_argument('col3')
-        col4 = self.get_argument('col4')
-        col5 = self.get_argument('col5')
+        col1 = escape(self.get_argument('col1'))
+        col2 = escape(self.get_argument('col2'))
+        col3 = escape(self.get_argument('col3'))
+        col4 = escape(self.get_argument('col4'))
+        col5 = escape(self.get_argument('col5'))
         cur.execute(cmd, (col2, col3, col4, col5, col1))
         con.commit()
         self.redirect('/')
@@ -65,7 +66,7 @@ class Delete(tornado.web.RequestHandler):
 
     def post(self):
         cmd = "DELETE FROM test WHERE id=%s"
-        col1 = self.get_argument('col1')
+        col1 = escape(self.get_argument('col1'))
         cur.execute(cmd, (col1,))
         con.commit()
         self.redirect('/')
@@ -105,6 +106,10 @@ def get_data():
 
     target = {"data": bulk_dic}
     return json.dumps(target)
+
+
+def escape(bad_user):
+    return tornado.escape.xhtml_escape(bad_user)
 
 
 if __name__ == '__main__':
