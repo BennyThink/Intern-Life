@@ -10,6 +10,7 @@ __author__ = 'Benny <benny@bennythink.com>'
 import tornado.ioloop
 import tornado.web
 import tornado.autoreload
+from tornado.escape import xhtml_escape as escape
 import tornado.escape
 import os
 import mysql.connector
@@ -106,10 +107,6 @@ def get_data():
 
     target = {"data": bulk_dic}
     return json.dumps(target)
-
-
-def escape(bad_user):
-    return tornado.escape.xhtml_escape(bad_user)
 
 
 if __name__ == '__main__':
