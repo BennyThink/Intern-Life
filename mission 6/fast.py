@@ -22,6 +22,9 @@ cur = con.cursor()
 
 class Create(tornado.web.RequestHandler):
 
+    def data_received(self, chunk):
+        pass
+
     def get(self):
         self.render('index.html')
 

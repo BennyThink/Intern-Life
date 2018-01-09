@@ -61,30 +61,32 @@
     </div>
 </div>
 
+<div class="container">
+    <div id="toolbar">
+        <button id="create" class="btn btn-default">
+            添加
+        </button>
+    </div>
 
-<div id="toolbar">
-    <button id="create" class="btn btn-default">
-        添加
-    </button>
+
+    <table id="table" data-toggle="table"
+           data-toolbar="#toolbar"
+           data-search="true"
+           data-pagination="true"
+           data-page-list="[5, 10, 15, 20, ALL]"
+           data-show-refresh="true">
+        <thead>
+        <tr>
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="name" data-sortable="true">Name</th>
+            <th data-field="ip" data-sortable="true">IP</th>
+            <th data-field="platform" data-sortable="true">Platform</th>
+            <th data-field="hardware" data-sortable="true">Hardware</th>
+            <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">Action</th>
+        </tr>
+        </thead>
+    </table>
 </div>
-
-<table id="table" data-toggle="table"
-       data-search="true"
-       data-pagination="true"
-       data-page-list="[5, 10, 15, 20, ALL]"
-       data-show-refresh="true">
-    <thead>
-    <tr>
-        <th data-field="id" data-sortable="true">ID</th>
-        <th data-field="name" data-sortable="true">Name</th>
-        <th data-field="ip" data-sortable="true">IP</th>
-        <th data-field="platform" data-sortable="true">Platform</th>
-        <th data-field="hardware" data-sortable="true">Hardware</th>
-        <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">Action</th>
-    </tr>
-    </thead>
-</table>
-
 <div id="modal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -154,6 +156,8 @@
 
 
 <script>
+
+    //var s=document.getElementsByName('refresh');
 
 
     function actionFormatter(value, row, index) {
@@ -231,6 +235,7 @@
 
             $("#table").bootstrapTable('load', data);
 
+
         }
     });
 
@@ -262,10 +267,17 @@
 
     });
 
-    //$('<div>').appendTo('body').addClass('alert alert-success').html('操作成功').show().delay(1500).fadeOut();
+
+    $(function () {
+        $("button[name='refresh']").click(function () {
+            $('#table').bootstrapTable('refresh');
+
+        });
+
+    });
+
 
 </script>
-
 
 </body>
 
