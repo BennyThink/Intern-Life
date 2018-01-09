@@ -146,6 +146,7 @@
 </div><!-- /.modal -->
 
 <script>
+    var url = window.location.host;
 
     function actionFormatter(value, row, index) {
         return [
@@ -178,7 +179,7 @@
                 var col5 = document.getElementsByName('col5')[0].value;
                 $.ajax({
                     type: 'POST',
-                    url: 'http://127.0.0.1:8888/upsert/update/',
+                    url: 'http://' + url + '/upsert/update/',
                     data: {col1: col1, col2: col2, col3: col3, col4: col4, col5: col5},
                     success: function (data, status) {
                         if (status === "success")
@@ -197,7 +198,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: 'http://127.0.0.1:8888/delete/',
+                    url: 'http://' + url + '/delete/',
                     data: {col1: row['id']},
                     success: function (data, status) {
                         if (status === "success")
@@ -214,7 +215,7 @@
     //list
     $.ajax({
         type: 'GET',
-        url: 'http://127.0.0.1:8888/list/',
+        url: 'http://' + url + '/list/',
         dataType: 'json',
         cache: false,
         crossDomain: true,
@@ -244,7 +245,7 @@
             var col5 = document.getElementsByName('col5')[0].value;
             $.ajax({
                 type: 'POST',
-                url: 'http://127.0.0.1:8888/upsert/create/',
+                url: 'http://' + url + '/upsert/create/',
                 data: {col1: col1, col2: col2, col3: col3, col4: col4, col5: col5},
 
                 success: function (data, status) {
