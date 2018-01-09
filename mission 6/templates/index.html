@@ -3,28 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>这是什么？</title>
-    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
 
     <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+    <script src="/static/js/bootstrap.min.js"></script>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
-
+    <link rel="stylesheet" href="/static/css/bootstrap-table.min.css">
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
-
+    <script src="/static/js/bootstrap-table.min.js"></script>
     <!-- Latest compiled and minified Locales -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/static/js/bootstrap-table-zh-CN.min.js"></script>
 </head>
 <body>
-
 
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -67,7 +61,6 @@
             添加
         </button>
     </div>
-
 
     <table id="table" data-toggle="table"
            data-toolbar="#toolbar"
@@ -122,7 +115,6 @@
                     <input type="text" class="form-control" name="col5">
                 </div>
 
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -131,7 +123,6 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
 
 <!-- 信息删除确认 -->
 <div class="modal fade" id="delcfmModel">
@@ -154,11 +145,7 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
 <script>
-
-    //var s=document.getElementsByName('refresh');
-
 
     function actionFormatter(value, row, index) {
         return [
@@ -183,6 +170,7 @@
             document.getElementsByName('col5')[0].value = row['hardware'];
             $('#update').click(function () {
                 //update
+                $('#modal').modal('show');
                 var col1 = document.getElementsByName('col1')[0].value;
                 var col2 = document.getElementsByName('col2')[0].value;
                 var col3 = document.getElementsByName('col3')[0].value;
@@ -190,7 +178,7 @@
                 var col5 = document.getElementsByName('col5')[0].value;
                 $.ajax({
                     type: 'POST',
-                    url: 'http://127.0.0.1:8888/update/',
+                    url: 'http://127.0.0.1:8888/upsert/update/',
                     data: {col1: col1, col2: col2, col3: col3, col4: col4, col5: col5},
                     success: function (data, status) {
                         if (status === "success")
@@ -206,7 +194,6 @@
         'click .remove': function (e, value, row, index) {
             $('#delcfmModel').modal(0);
             $('#delete').click(function () {
-
 
                 $.ajax({
                     type: 'POST',
@@ -242,6 +229,11 @@
 
     $('#create').click(function () {
         $('#modal').modal('show');
+        document.getElementsByName('col1')[0].value = '';
+        document.getElementsByName('col2')[0].value = '';
+        document.getElementsByName('col3')[0].value = '';
+        document.getElementsByName('col4')[0].value = '';
+        document.getElementsByName('col5')[0].value = '';
 
         $('#update').click(function () {
             //新增
@@ -252,7 +244,7 @@
             var col5 = document.getElementsByName('col5')[0].value;
             $.ajax({
                 type: 'POST',
-                url: 'http://127.0.0.1:8888/add/',
+                url: 'http://127.0.0.1:8888/upsert/create/',
                 data: {col1: col1, col2: col2, col3: col3, col4: col4, col5: col5},
 
                 success: function (data, status) {
@@ -263,8 +255,6 @@
             });
 
         })
-
-
     });
 
 
@@ -276,9 +266,6 @@
 
     });
 
-
 </script>
-
 </body>
-
 </html>

@@ -20,45 +20,30 @@ con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', da
 cur = con.cursor()
 
 
-class Create(tornado.web.RequestHandler):
-
-    def data_received(self, chunk):
-        pass
-
-    def get(self):
-        self.render('index.html')
-
-    def post(self):
-        cmd = "INSERT INTO test VALUES (%s,%s,%s,%s,%s)"
-        col1 = escape(self.get_argument('col1'))
-        col2 = escape(self.get_argument('col2'))
-        col3 = escape(self.get_argument('col3'))
-        col4 = escape(self.get_argument('col4'))
-        col5 = escape(self.get_argument('col5'))
-        cur.execute(cmd, (col1, col2, col3, col4, col5))
-        con.commit()
-        self.redirect('/')
-
-
 class Retreive(tornado.web.RequestHandler):
 
     def get(self):
         self.write(get_data())
 
 
-class Update(tornado.web.RequestHandler):
+class Upsert(tornado.web.RequestHandler):
 
     def get(self):
         self.render('index.html')
 
     def post(self):
-        cmd = "UPDATE test SET name=%s,ip=%s,platform=%s,hardware=%s WHERE id=%s"
         col1 = escape(self.get_argument('col1'))
         col2 = escape(self.get_argument('col2'))
         col3 = escape(self.get_argument('col3'))
         col4 = escape(self.get_argument('col4'))
         col5 = escape(self.get_argument('col5'))
-        cur.execute(cmd, (col2, col3, col4, col5, col1))
+        if 'create' in self.request.uri:
+            cmd = "INSERT INTO test VALUES (%s,%s,%s,%s,%s)"
+            cur.execute(cmd, (col1, col2, col3, col4, col5))
+        else:
+            cmd = "UPDATE test SET name=%s,ip=%s,platform=%s,hardware=%s WHERE id=%s"
+            cur.execute(cmd, (col2, col3, col4, col5, col1))
+
         con.commit()
         self.redirect('/')
 
@@ -84,9 +69,9 @@ class Index(tornado.web.RequestHandler):
 
 def make_app():
     return tornado.web.Application([
-        (r'/add/', Create),
+        (r'/upsert/create/', Upsert),
         (r'/list/', Retreive),
-        (r'/update/', Update),
+        (r'/upsert/update/', Upsert),
         (r'/delete/', Delete),
         (r'/', Index),
     ],
