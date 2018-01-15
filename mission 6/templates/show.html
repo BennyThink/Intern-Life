@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>这……</title>
+    <script src="/static/js/jquery.min.js"></script>
+
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="/static/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="/static/css/bootstrap-table.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="/static/js/bootstrap-table.min.js"></script>
+    <!-- Latest compiled and minified Locales -->
+    <script src="/static/js/bootstrap-table-zh-CN.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Cisco</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="javascript:location.reload()">ヾ(≧▽≦*)o<span class="sr-only">(current)</span></a>
+                </li>
+                <li><a href="javascript:">φ(*￣0￣)</a></li>
+
+            </ul>
+
+        </div><!-- /.navbar-collapse -->
+    </div>
+</nav>
+
+<div class="jumbotron">
+    <div class="container">
+        <h1>:(){ :|:& };:</h1>
+        <p>这是一段
+            <del>很好玩的</del>
+            <sup>疯癫的</sup>代码
+        </p>
+        <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p></div>-->
+    </div>
+</div>
+
+<div class="container">
+    <div id="toolbar">
+        <button id="create" class="btn btn-default">
+            添加
+        </button>
+    </div>
+
+    <table id="table" data-toggle="table"
+           data-toolbar="#toolbar"
+           data-search="true"
+           data-pagination="true"
+           data-page-list="[10, 20, 30, 40, ALL]"
+           data-show-refresh="true">
+        <thead>
+        <tr>
+            <th data-field="id" data-sortable="true">ID</th>
+            <th data-field="ip" data-sortable="true">IP</th>
+            <th data-field="mac" data-sortable="true">mac</th>
+            <th data-field="vlan" data-sortable="true">vlan</th>
+            <th data-field="hostname" data-sortable="true">hostname</th>
+            <th data-field="interface" data-sortable="true">interface</th>
+            <th data-field="int_desc" data-sortable="true">int_desc</th>
+            <th data-field="gateway" data-sortable="true">gateway</th>
+
+            <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">Action</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<div id="modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">哎呀呀呀</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label>ID</label>
+                    <input type="text" class="form-control" name="col1">
+                </div>
+                <div class="form-group">
+                    <label>IP</label>
+                    <input type="text" class="form-control" name="col2">
+                </div>
+
+                <div class="form-group">
+                    <label>mac</label>
+                    <input type="text" class="form-control" name="col3">
+                </div>
+
+                <div class="form-group">
+                    <label>vlan</label>
+                    <input type="text" class="form-control" name="col4">
+                </div>
+
+                <div class="form-group">
+                    <label>hostname</label>
+                    <input type="text" class="form-control" name="col5">
+                </div>
+
+                <div class="form-group">
+                    <label>interface</label>
+                    <input type="text" class="form-control" name="col6">
+                </div>
+                <div class="form-group">
+                    <label>int_desc</label>
+                    <input type="text" class="form-control" name="col7">
+                </div>
+                <div class="form-group">
+                    <label>gateway</label>
+                    <input type="text" class="form-control" name="col8">
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="update" type="button" class="btn btn-primary submit" data-dismiss="modal">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- 信息删除确认 -->
+<div class="modal fade" id="delcfmModel">
+    <div class="modal-dialog">
+        <div class="modal-content message_align">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body">
+                <p>您确认要删除吗？</p>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="url"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a id="delete" class="btn btn-success" data-dismiss="modal">确定</a>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+    var url = window.location.host;
+
+    function actionFormatter(value, row, index) {
+        return [
+            '<a class="edit ml10" href="javascript:void(0)" title="Edit">',
+            '<i class="glyphicon glyphicon-edit"></i>&nbsp;',
+            '</a>',
+            '<a class="remove ml10" href="javascript:void(0)" title="Remove">',
+            '<i class="glyphicon glyphicon-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+
+    window.actionEvents = {
+
+        'click .edit': function (e, value, row, index) {
+            $('#modal').modal('show');
+
+            document.getElementsByName('col1')[0].value = row['id'];
+            document.getElementsByName('col2')[0].value = row['ip'];
+            document.getElementsByName('col3')[0].value = row['mac'];
+            document.getElementsByName('col4')[0].value = row['vlan'];
+            document.getElementsByName('col5')[0].value = row['hostname'];
+            document.getElementsByName('col6')[0].value = row['interface'];
+            document.getElementsByName('col7')[0].value = row['int_desc'];
+            document.getElementsByName('col8')[0].value = row['gateway'];
+
+            $('#update').click(function () {
+                //update
+                $('#modal').modal('show');
+                var col1 = document.getElementsByName('col1')[0].value;
+                var col2 = document.getElementsByName('col2')[0].value;
+                var col3 = document.getElementsByName('col3')[0].value;
+                var col4 = document.getElementsByName('col4')[0].value;
+                var col5 = document.getElementsByName('col5')[0].value;
+                var col6 = document.getElementsByName('col6')[0].value;
+                var col7 = document.getElementsByName('col7')[0].value;
+                var col8 = document.getElementsByName('col8')[0].value;
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://' + url + '/upsert/update/',
+                    data: {
+                        col1: col1,
+                        col2: col2,
+                        col3: col3,
+                        col4: col4,
+                        col5: col5,
+                        col6: col6,
+                        col7: col7,
+                        col8: col8
+                    },
+                    success: function (data, status) {
+                        if (status === "success")
+                            location.reload();
+                    }
+
+                });
+
+
+            })
+
+        },
+        'click .remove': function (e, value, row, index) {
+            $('#delcfmModel').modal(0);
+            $('#delete').click(function () {
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://' + url + '/delete/',
+                    data: {col1: row['id']},
+                    success: function (data, status) {
+                        if (status === "success")
+                            location.reload();
+                    }
+
+                });
+
+            })
+        }
+    };
+
+
+    //list
+    $.ajax({
+        type: 'GET',
+        url: 'http://' + url + '/list/',
+        dataType: 'json',
+        cache: false,
+        crossDomain: true,
+        success: function (data) {
+
+            $("#table").bootstrapTable('load', data);
+
+
+        }
+    });
+
+
+    $('#create').click(function () {
+        $('#modal').modal('show');
+        //document.getElementsByName('col1')[0].disabled = true;
+        //document.getElementsByName('col1')[0].parentNode.removeChild(document.getElementsByName('col1')[0]);
+        document.getElementsByName('col1')[0].value = '';
+        document.getElementsByName('col2')[0].value = '';
+        document.getElementsByName('col3')[0].value = '';
+        document.getElementsByName('col4')[0].value = '';
+        document.getElementsByName('col5')[0].value = '';
+        document.getElementsByName('col6')[0].value = '';
+        document.getElementsByName('col7')[0].value = '';
+        document.getElementsByName('col8')[0].value = '';
+
+        $('#update').click(function () {
+            //新增
+            var col1 = document.getElementsByName('col1')[0].value;
+            var col2 = document.getElementsByName('col2')[0].value;
+            var col3 = document.getElementsByName('col3')[0].value;
+            var col4 = document.getElementsByName('col4')[0].value;
+            var col5 = document.getElementsByName('col5')[0].value;
+            var col6 = document.getElementsByName('col6')[0].value;
+            var col7 = document.getElementsByName('col7')[0].value;
+            var col8 = document.getElementsByName('col8')[0].value;
+
+            $.ajax({
+                type: 'POST',
+                url: 'http://' + url + '/upsert/create/',
+                data: {
+                    col1: col1,
+                    col2: col2,
+                    col3: col3,
+                    col4: col4,
+                    col5: col5,
+                    col6: col6,
+                    col7: col7,
+                    col8: col8
+                },
+                success: function (data, status) {
+                    if (status === "success")
+                        location.reload();
+                }
+
+            });
+
+        })
+    });
+
+
+    $(function () {
+        $("button[name='refresh']").click(function () {
+            $('#table').bootstrapTable('refresh');
+
+        });
+
+    });
+
+</script>
+</body>
+</html>
