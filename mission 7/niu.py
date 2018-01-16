@@ -22,7 +22,7 @@ def read_3_json():
     return f1[0].get('data'), f2[0].get('data'), f3[0].get('data')
 
 
-arp_list, mac_list, basic_list = read_3_json()
+arp_info, mac_info, basic_info = read_3_json()
 
 
 def get_ip_mac_index_gateway():
@@ -31,7 +31,7 @@ def get_ip_mac_index_gateway():
     index_list = []
     gateway_list = []
 
-    for ip_mac_id in arp_list:
+    for ip_mac_id in arp_info:
         for ip in ip_mac_id.get('arp_list'):
             ip_list.append(ip[0])
             mac_list.append(ip[1])
@@ -41,8 +41,8 @@ def get_ip_mac_index_gateway():
     return ip_list, mac_list, index_list, gateway_list
 
 
-def parse_vhi(mac, gw):
-    for hn in mac_list:
+def parse_vhi(mac):
+    for hn in mac_info:
         # if hn.get('hostname') == gw:
         for vlan in hn.get('mac_dict'):
             for i in hn.get('mac_dict').get(vlan, [mac, 'N/A']):
@@ -52,7 +52,7 @@ def parse_vhi(mac, gw):
 
 
 def get_vlan_hostname_interface(mac, gw):
-    result = parse_vhi(mac, gw)
+    result = parse_vhi(mac)
     if result is None:
         return 'N/A', gw, 'N/A'
     else:
@@ -60,7 +60,7 @@ def get_vlan_hostname_interface(mac, gw):
 
 
 def get_desc(gw, index):
-    for item in basic_list:
+    for item in basic_info:
         if item.get('hostname') == gw:
             return item.get('if_desc').get(index)
 

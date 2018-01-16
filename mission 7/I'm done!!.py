@@ -22,3 +22,22 @@ def read_3_json():
 
 
 arp_info, mac_info, basic_info = read_3_json()
+
+
+def get_ip_mac_hn_index():
+    se = []
+    se2 = []
+    for three in arp_info:
+        for ip_mac_index in three.get('arp_list'):
+            se.append(ip_mac_index)
+            se2.append(three.get('hostname'))
+    return se, se2
+
+
+if __name__ == '__main__':
+    s = []
+    for three in arp_info:
+        for ip_mac_index in three.get('arp_list'):
+            s.append(ip_mac_index[0])
+    print len(s)
+    print len(set(s))

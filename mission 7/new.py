@@ -41,7 +41,7 @@ def get_ip_mac_index_gateway():
     return ip_list, mac_list, index_list, gateway_list
 
 
-def parse_vhi(mac, gw):
+def parse_vhi(mac):
     for hn in mac_info:
         # if hn.get('hostname') == gw:
         for vlan in hn.get('mac_dict'):
@@ -52,7 +52,7 @@ def parse_vhi(mac, gw):
 
 
 def get_vlan_hostname_interface(mac, gw):
-    result = parse_vhi(mac, gw)
+    result = parse_vhi(mac)
     if result is None:
         return 'N/A', gw, 'N/A'
     else:
