@@ -24,20 +24,36 @@ def read_3_json():
 arp_info, mac_info, basic_info = read_3_json()
 
 
-def get_ip_mac_hn_index():
-    se = []
-    se2 = []
-    for three in arp_info:
-        for ip_mac_index in three.get('arp_list'):
-            se.append(ip_mac_index)
-            se2.append(three.get('hostname'))
-    return se, se2
+def get_ip_mac():
+    ip_mac = []
+    for i in arp_info:
+        for j in i.get('arp_list'):
+            ip_mac.append(tuple(j))
+    return ip_mac
+
+
+def hostname_ifname(mac):
+    info = []
+    for hn in mac_info:
+        for vlan in hn.get('mac_dict'):
+            for i in hn.get('mac_dict').get(vlan, [mac, 'N/A']):
+                if i[0] == mac:
+                    info.append((vlan, hn.get('hostname'), i[1], i[0]))
+    return info
+
+
+def get_desc(hn, ifname):
+    for i in basic_info:
+        if i.get('hostname') == hn:
+            for j in i.get('if_index'):
+                if i.get('if_index').get(j) == ifname:
+                    return i.get('if_desc').get(j)
 
 
 if __name__ == '__main__':
-    s = []
-    for three in arp_info:
-        for ip_mac_index in three.get('arp_list'):
-            s.append(ip_mac_index[0])
-    print len(s)
-    print len(set(s))
+    x = get_ip_mac()
+
+    for i in x:
+        y = hostname_ifname(i[1])
+        for ii in y:
+            get_desc(ii[1], ii[2])

@@ -11,6 +11,19 @@ import json
 import mysql.connector
 
 
+import time
+
+
+def exe_time(fun):
+    def wrapper(*args, **kwargs):
+        t = time.time()
+        res = fun(*args, **kwargs)
+        print '** ', fun.__name__, ' ** | ', time.time() - t
+        return res
+
+    return wrapper
+
+
 def read_3_json():
     with open('arp_info.json') as f:
         f1 = json.load(f)
@@ -74,21 +87,22 @@ def get_some():
     desc_list = []
 
     while len(b) > 0:
-        res = get_vlan_hostname_interface(b[0], d[0])
+        res = get_vlan_hostname_interface(b[-1], d[-1])
         vlan_list.append(res[0])
         hostname_list.append(res[1])
         interface_list.append(res[2])
-        res = get_desc(d[0], c[0])
+        res = get_desc(d[-1], c[-1])
         desc_list.append(res)
-        a.pop(0)
-        b.pop(0)
-        c.pop(0)
-        d.pop(0)
+        # TODO: this is very slow, how about pop(-1), try deque or...?
+        a.pop(-1)
+        b.pop(-1)
+        c.pop(-1)
+        d.pop(-1)
 
     final = zip(ip_list, m_list, vlan_list, hostname_list, interface_list, desc_list, gw_list)
     return final
 
-
+@exe_time
 def insert():
     res = get_some()
     print type(res)
@@ -106,5 +120,4 @@ def insert():
 
 
 if __name__ == '__main__':
-    pass
-    # insert()
+    insert()
