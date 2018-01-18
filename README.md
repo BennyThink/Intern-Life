@@ -23,4 +23,3 @@ Intern-Life
 ## Afterwards
 
 ## Notes
-* vue, element(s)
