@@ -33,7 +33,7 @@ def parse_arp_mac():
 
     basic_dict = generate_basic_dict()
     arp_dict = {}
-    # generate arp_dict, the key is mac address, value is hostname & IP in a list.
+    # generate arp_dict, the key is mac address, value is [hostname, IP].
     for arp_list in arp_info:
         for i in arp_list.get('arp_list'):
             ip, mac, _ = i
@@ -44,21 +44,22 @@ def parse_arp_mac():
     for hn in mac_info:
         for vlan in hn['mac_dict']:
             for item in hn['mac_dict'][vlan]:
-                mac_addr, inftc_name = item[0], item[-1]
-                used_mac.append(mac_addr)
+                mac_address, interface_name = item[0], item[-1]
+                used_mac.append(mac_address)
                 # index fix
-                interface_desc = basic_dict.get(hn['hostname'], {}).get(inftc_name.lower(), ['', ''])
-                gateway_info = arp_dict.get(mac_addr, [])
+                interface_desc = basic_dict.get(hn['hostname'], {}).get(interface_name.lower(), ['', ''])
+                gateway_info = arp_dict.get(mac_address, [])
 
                 for ip_gw in gateway_info:
                     write2db.append(
-                        (ip_gw[-1], mac_addr, vlan, hn['hostname'], inftc_name, interface_desc[0], interface_desc[1]))
+                        (ip_gw[-1], mac_address, vlan, hn['hostname'], interface_name, interface_desc[0],
+                         interface_desc[1]))
     # for those mac who was in arp_info but not in mac_info
     for gateway in arp_info:
         for item in gateway.get('arp_list'):
-            ip, mac_addr, index = item
-            if mac_addr not in used_mac:
-                write2db.append((ip, mac_addr, '', '', '', index, ''))
+            ip, mac_address, index = item
+            if mac_address not in used_mac:
+                write2db.append((ip, mac_address, '', '', '', index, ''))
 
     return write2db
 
