@@ -3,7 +3,7 @@
 
 # Intern-Life - redo.py
 # 2018/1/18 13:52
-# 
+# for more information please check the two txt files.
 
 __author__ = 'Benny <benny@bennythink.com>'
 

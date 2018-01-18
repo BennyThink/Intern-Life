@@ -1,110 +1,87 @@
 #!/usr/bin/python
 # coding:utf-8
 
-# Intern-Life - new.py
-# 2018/1/14 19:45
-# 
-
-__author__ = 'Benny <benny@bennythink.com>'
-
 import json
 import mysql.connector
 
 
-def read_3_json():
-    with open('arp_info.json') as f:
-        f1 = json.load(f)
-    with open('mac_info.json') as f:
-        f2 = json.load(f)
+def generate_basic_dict():
+    """
+    generate a dict according to basic_info.json, provide searching for interface description
+    :return: a dict like {'JD70SW24-B1-VDC2': {'ethernet4/11': 'this is description'}}
+    """
     with open('basic_info.json') as f:
-        f3 = json.load(f)
+        basic_info = json.load(f)[0].get('data')
 
-    return f1[0].get('data'), f2[0].get('data'), f3[0].get('data')
+    basic_dict = {}
+    for hn in basic_info:
+        basic_dict.setdefault(hn.get('hostname'), {})
+        for index in hn.get('if_index'):
+            if index in hn.get('if_desc'):
+                # index: tuple unpacking
+                basic_dict[hn.get('hostname')].update(
+                    {hn.get('if_index').get(index).lower(): [index, hn.get('if_desc').get(index)]})
 
-
-arp_info, mac_info, basic_info = read_3_json()
-
-
-def get_ip_mac_index_gateway():
-    ip_list = []
-    mac_list = []
-    index_list = []
-    gateway_list = []
-
-    for ip_mac_id in arp_info:
-        for ip in ip_mac_id.get('arp_list'):
-            ip_list.append(ip[0])
-            mac_list.append(ip[1])
-            index_list.append(ip[2])
-            gateway_list.append(ip_mac_id.get('hostname'))
-
-    return ip_list, mac_list, index_list, gateway_list
+    return basic_dict
 
 
-def parse_vhi(mac):
+def parse_arp_mac():
+    with open('mac_info.json') as f:
+        mac_info = json.load(f)[0].get('data')
+    with open('arp_info.json') as f:
+        arp_info = json.load(f)[0].get('data')
+
+    basic_dict = generate_basic_dict()
+    arp_dict = {}
+    # generate arp_dict, the key is mac address, value is hostname & IP in a list.
+    for arp_list in arp_info:
+        for i in arp_list.get('arp_list'):
+            ip, mac, _ = i
+            arp_dict.setdefault(i[1], [])
+            arp_dict[mac].append([arp_list.get('hostname'), ip])
+
+    write2db, used_mac = [], []
     for hn in mac_info:
-        # if hn.get('hostname') == gw:
-        for vlan in hn.get('mac_dict'):
-            for i in hn.get('mac_dict').get(vlan, [mac, 'N/A']):
-                if i[0] == mac:
-                    # return i[0], vlan, gw, i[1]
-                    return vlan, hn.get('hostname'), i[1]
+        for vlan in hn['mac_dict']:
+            for item in hn['mac_dict'][vlan]:
+                mac_addr, inftc_name = item[0], item[-1]
+                used_mac.append(mac_addr)
+                # index fix
+                interface_desc = basic_dict.get(hn['hostname'], {}).get(inftc_name.lower(), ['', ''])
+                gateway_info = arp_dict.get(mac_addr, [])
+
+                for ip_gw in gateway_info:
+                    write2db.append(
+                        (ip_gw[-1], mac_addr, vlan, hn['hostname'], inftc_name, interface_desc[0], interface_desc[1]))
+    # for those mac who was in arp_info but not in mac_info
+    for gateway in arp_info:
+        for item in gateway.get('arp_list'):
+            ip, mac_addr, index = item
+            if mac_addr not in used_mac:
+                write2db.append((ip, mac_addr, '', '', '', index, ''))
+
+    return write2db
 
 
-def get_vlan_hostname_interface(mac, gw):
-    result = parse_vhi(mac)
-    if result is None:
-        return 'N/A', gw, 'N/A'
-    else:
-        return result
-
-
-def get_desc(gw, index):
-    for item in basic_info:
-        if item.get('hostname') == gw:
-            return item.get('if_desc').get(index)
-
-
-def get_some():
-    a, b, c, d = get_ip_mac_index_gateway()
-    ip_list, m_list, index_list, gw_list = list(a), list(b), list(c), list(d)
-    vlan_list = []
-    hostname_list = []
-    interface_list = []
-    desc_list = []
-
-    while len(b) > 0:
-        res = get_vlan_hostname_interface(b[-1], d[-1])
-        vlan_list.append(res[0])
-        hostname_list.append(res[1])
-        interface_list.append(res[2])
-        res = get_desc(d[-1], c[-1])
-        desc_list.append(res)
-        # TODO: this is very slow, how about pop(-1), try deque or...?
-        a.pop(-1)
-        b.pop(-1)
-        c.pop(-1)
-        d.pop(-1)
-
-    final = zip(ip_list, m_list, vlan_list, hostname_list, interface_list, index_list, desc_list)
-    return final
-
-
-def insert():
-    res = get_some()
-    print type(res)
-
+def insert_db(write2db):
+    """
+    insert data to MySQL and close the connection
+    :param write2db: data in the right form
+    :return: None
+    """
     con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', database='front')
     cur = con.cursor()
-    cmd = 'INSERT INTO test3 VALUES (%s,%s,%s,%s,%s,%s,%s)'
-    cur.execute("SET GLOBAL max_allowed_packet=1073741824")
+    cmd = 'INSERT INTO new VALUES (%s,%s,%s,%s,%s,%s,%s)'
+    # set these parameters if necessary.
+    cur.execute('SET GLOBAL max_allowed_packet=1073741824')
     cur.execute('SET GLOBAL CONNECT_TIMEOUT = 600')
     cur.execute('SET SESSION NET_READ_TIMEOUT = 6000')
 
-    cur.executemany(cmd, res)
+    cur.executemany(cmd, write2db)
     con.commit()
     con.close()
 
 
 if __name__ == '__main__':
-    insert()
+    parse_result = parse_arp_mac()
+    insert_db(parse_result)
