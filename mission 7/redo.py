@@ -12,6 +12,10 @@ import mysql.connector
 
 
 def generate_basic_dict():
+    """
+    generate a dict according to basic_info.json, provide searching for interface description
+    :return: a dict like {'JD70SW24-B1-VDC2': {'ethernet4/11': 'this is description'}}
+    """
     with open('basic_info.json') as f:
         basic_info = json.load(f)[0].get('data')
 
@@ -22,7 +26,7 @@ def generate_basic_dict():
             if index in hn.get('if_desc'):
                 # TODO tuple unpacking
                 basic_dict[hn.get('hostname')].update(
-                    {hn.get('if_index').get(index).lower(): [index, hn.get('if_desc').get(index)]})
+                    {hn.get('if_index').get(index).lower(): hn.get('if_desc').get(index)})
 
     return basic_dict
 
@@ -35,6 +39,7 @@ def parse_arp_mac():
 
     basic_dict = generate_basic_dict()
     arp_dict = {}
+    # generate arp_dict, the key is mac address, value is hostname & IP in a list.
     for arp_list in arp_info:
         for i in arp_list.get('arp_list'):
             ip, mac, _ = i
@@ -47,13 +52,13 @@ def parse_arp_mac():
             for item in hn['mac_dict'][vlan]:
                 mac_addr, inftc_name = item[0], item[-1]
                 used_mac.append(mac_addr)
-                # TODO: fix here, add index.
+                # TODO: add index.
                 interface_desc = basic_dict.get(hn['hostname'], {}).get(inftc_name.lower(), '')
                 gateway_info = arp_dict.get(mac_addr, [])
 
                 for ip_gw in gateway_info:
                     write2db.append((ip_gw[-1], mac_addr, vlan, hn['hostname'], inftc_name, interface_desc, ip_gw[0]))
-
+    # for those mac who was in arp_info but not in mac_info
     for gateway in arp_info:
         for item in gateway.get('arp_list'):
             ip, mac_addr, _ = item
@@ -64,10 +69,16 @@ def parse_arp_mac():
 
 
 def insert_db(write2db):
+    """
+    insert data to MySQL and close the connection
+    :param write2db: data in the right form
+    :return: None
+    """
     con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', database='front')
     cur = con.cursor()
-    cmd = 'INSERT INTO test2 VALUES (NULL ,%s,%s,%s,%s,%s,%s,%s)'
-    cur.execute("SET GLOBAL max_allowed_packet=1073741824")
+    cmd = 'INSERT INTO gw VALUES (%s,%s,%s,%s,%s,%s,%s)'
+    # set these parameters if necessary.
+    cur.execute('SET GLOBAL max_allowed_packet=1073741824')
     cur.execute('SET GLOBAL CONNECT_TIMEOUT = 600')
     cur.execute('SET SESSION NET_READ_TIMEOUT = 6000')
 
