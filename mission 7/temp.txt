@@ -1,0 +1,45 @@
+
+
+basic_info: 
+
+basic_dict[hostname][intfc_name] = intfc_desc
+basic_dict.get(hostname, {}).get(inftc_name.lower(), '')
+
+
+
+{
+	"JD345446": {
+	   "intfc1": intfc1_desc,
+	   
+	
+	}
+
+
+}
+
+
+mac_info
+arp_info
+
+
+
+
+basic_dict[hostname][inftc_name] = intfc_desc
+arp_dict[mac_addr] = [[gateway, ip], []]
+
+
+write2db, used_mac = [], []
+for hostname in data:
+   for vlan in mac_dict:
+      for item in mac_dict[vlan]:
+	      mac_addr, inftc_name = item
+		  used_mac.append(mac_addr)
+		  intfc_desc = basic_dict.get(hostname, {}).get(inftc_name, '')
+		  gateway_info = arp_info.get(mac_addr, [])
+		  write2db.append()
+		  
+for gateway in data:
+   for item in arp_dict:
+      ip, mac_addr = item
+	  if not mac_addr in used_mac:
+	     write2db.append()

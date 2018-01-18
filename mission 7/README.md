@@ -17,11 +17,12 @@ link mutiple table json.
 
 
 ## Suggestions by mentor(s)
+* Ask
+* module by function
 
 ## Suggestions by myself
-
+ASK.
 
 ## Afterwards
 
 ## Notes
-* vue, element(s)

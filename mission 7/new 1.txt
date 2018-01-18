@@ -1,0 +1,18 @@
+
+basic_info: 
+if_desc->interface description, if_index->interface name
+&  hostname  
+
+
+
+
+
+gateway - from arp.hostname
+hostname - from mac.hostname
+
+
+mac_info : through hostname & interface name to query in basic_info  
+
+
+
+arp_info and mac_info  use xxx  via mac_address
