@@ -90,8 +90,9 @@ def insert_db(write2db):
 
 
 def write_xls(data):
-    wb = Workbook()
-    ws = wb.active
+    # set write_only for large data set.
+    wb = Workbook(write_only=True)
+    ws = wb.create_sheet()
     ws.append(['IP', 'MAC', 'Vlan', 'hostname', 'interface', 'int_desc', 'gateway'])
 
     # separate large list to small list, unnecessary for this situation though.
