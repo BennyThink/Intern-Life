@@ -41,10 +41,10 @@ class Upsert(tornado.web.RequestHandler):
         col7 = escape(self.get_argument('col7'))
         col8 = escape(self.get_argument('col8'))
         if 'create' in self.request.uri:
-            cmd = "INSERT INTO test2 VALUES (NULL ,%s,%s,%s,%s,%s,%s,%s)"
+            cmd = "INSERT INTO gw VALUES (NULL ,%s,%s,%s,%s,%s,%s,%s)"
             cur.execute(cmd, (col2, col3, col4, col5, col6, col7, col8))
         else:
-            cmd = "UPDATE test2 SET ip=%s,mac=%s,vlan=%s,hostname=%s,interface=%s ,int_desc=%s ,gateway=%s WHERE id=%s"
+            cmd = "UPDATE gw SET ip=%s,mac=%s,vlan=%s,hostname=%s,interface=%s ,int_desc=%s ,gateway=%s WHERE id=%s"
             cur.execute(cmd, (col2, col3, col4, col5, col6, col7, col8, col1))
 
         con.commit()
@@ -57,7 +57,7 @@ class Delete(tornado.web.RequestHandler):
         self.render('show.html')
 
     def post(self):
-        cmd = "DELETE FROM test2 WHERE id=%s"
+        cmd = "DELETE FROM gw WHERE id=%s"
         col1 = escape(self.get_argument('col1'))
         cur.execute(cmd, (col1,))
         con.commit()
@@ -85,11 +85,11 @@ def make_app():
 
 
 def get_data():
-    cur.execute('SHOW COLUMNS from test2')
+    cur.execute('SHOW COLUMNS from gw')
     col_data = cur.fetchall()
     col_field = [i[0] for i in col_data]
 
-    cur.execute('SELECT * FROM test2')
+    cur.execute('SELECT * FROM gw')
     data = cur.fetchall()
     bulk_dic = []
     for i in range(len(data)):

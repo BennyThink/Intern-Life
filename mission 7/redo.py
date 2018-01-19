@@ -78,7 +78,7 @@ def insert_db(write2db):
     """
     con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', database='front')
     cur = con.cursor()
-    cmd = 'INSERT INTO gw VALUES (%s,%s,%s,%s,%s,%s,%s)'
+    cmd = 'INSERT INTO gw VALUES (NULL,%s,%s,%s,%s,%s,%s,%s)'
     # set these parameters if necessary.
     cur.execute('SET GLOBAL max_allowed_packet=1073741824')
     cur.execute('SET GLOBAL CONNECT_TIMEOUT = 600')
