@@ -8,7 +8,9 @@
 __author__ = 'Benny <benny@bennythink.com>'
 
 import json
+
 import mysql.connector
+from openpyxl import Workbook
 
 
 def generate_basic_dict():
@@ -87,6 +89,21 @@ def insert_db(write2db):
     con.close()
 
 
+def write_xls(data):
+    wb = Workbook()
+    ws = wb.active
+    ws.append(['IP', 'MAC', 'Vlan', 'hostname', 'interface', 'int_desc', 'gateway'])
+
+    # separate large list to small list, unnecessary for this situation though.
+    # for i in range(0, len(data), size):
+    #     part = data[i:i + size]
+    for item in data:
+        ws.append(item)
+
+    wb.save("sample.xlsx")
+
+
 if __name__ == '__main__':
     parse_result = parse_arp_mac()
-    insert_db(parse_result)
+    # insert_db(parse_result)
+    write_xls(parse_result)
