@@ -50,14 +50,15 @@ def parse_arp_mac():
                 interface_desc = basic_dict.get(hn['hostname'], {}).get(interface_name.lower(), ['', ''])
                 gateway_info = arp_dict.get(mac_address, [])
                 if len(gateway_info) == 0:
+
                     write2db.append(
                         ('', mac_address, vlan, hn['hostname'], interface_name, interface_desc[0],
-                         interface_desc[1]))
+                         interface_desc[1], ''))
                 # filter by vlan, how?
                 else:
                     write2db.append(
                         (gateway_info[0][-1], mac_address, vlan, hn['hostname'], interface_name, interface_desc[0],
-                         interface_desc[1]))
+                         interface_desc[1], gateway_info[0][0]))
                 #
                 # for ip_gw in gateway_info:
                 #     write2db.append(
@@ -68,7 +69,7 @@ def parse_arp_mac():
         for item in gateway.get('arp_list'):
             ip, mac_address, index = item
             if mac_address not in used_mac:
-                write2db.append((ip, mac_address, '', '', '', index, ''))
+                write2db.append((ip, mac_address, '', '', '', index, '', gateway['hostname']))
 
     return write2db
 
@@ -94,4 +95,5 @@ def insert_db(write2db):
 
 if __name__ == '__main__':
     parse_result = parse_arp_mac()
-    insert_db(parse_result)
+    print len(parse_result)
+    # insert_db(parse_result)
