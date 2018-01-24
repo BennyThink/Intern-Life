@@ -2,8 +2,15 @@
 # coding:utf-8
 
 import json
+import re
+from openpyxl import Workbook
 
 import mysql.connector
+
+
+def read_file(filename):
+    with open(filename) as f:
+        return json.load(f)[0].get('data')
 
 
 def generate_basic_dict():
@@ -11,8 +18,8 @@ def generate_basic_dict():
     generate a dict according to basic_info.json, provide searching for interface description
     :return: a dict like {'JD70SW24-B1-VDC2': {'ethernet4/11': 'this is description'}}
     """
-    with open('basic_info.json') as f:
-        basic_info = json.load(f)[0].get('data')
+
+    basic_info = read_file('basic_info.json')
 
     basic_dict = {}
     for hn in basic_info:
@@ -28,40 +35,35 @@ def generate_basic_dict():
 
 
 def extract_vlan_num(s):
-    # wrong regex
-    # r = re.compile(r"[Vlan\s](\d+)", re.I)
-    # result = r.findall(s)
-    # if result:
-    #     return result[0]
-    # else:
-    #     return ''
-
-    if 'Vlan' in s:
-        return s[4:]
-    elif 'VLAN' in s:
-        return s.split(' ')[2]
+    r = re.compile(r"Vlan\s?(\d+)", re.I)
+    result = r.findall(s)
+    if result:
+        return result[0]
     else:
         return ''
 
 
 def parse_arp_mac():
-    with open('mac_info.json') as f:
-        mac_info = json.load(f)[0].get('data')
-    with open('arp_info.json') as f:
-        arp_info = json.load(f)[0].get('data')
+    mac_info = read_file('mac_info.json')
+    arp_info = read_file('arp_info.json')
 
     basic_dict = generate_basic_dict()
     arp_dict = {}
-    # generate arp_dict, the key is mac address, value is [hostname, IP].
+    # generate arp_dict, the key is mac address, value is ['hostname1, hostname2', 'IP', 'index'].
     for arp_list in arp_info:
         for i in arp_list.get('arp_list'):
             ip, mac, index = i
 
             arp_dict.setdefault(i[1], [])
-            arp_dict[mac].append([arp_list.get('hostname'), ip, index])
+            # Merge gateway here is probably a bad idea.
+            if len(arp_dict[mac]) == 0:
+                arp_dict[mac].append([arp_list.get('hostname'), ip, index])
+            elif ip == arp_dict[mac][0][1] and index == arp_dict[mac][0][2]:
+                arp_dict[mac][0][0] = arp_dict[mac][0][0] + ',' + arp_list.get('hostname')
+            else:
+                arp_dict[mac].append([arp_list.get('hostname'), ip, index])
 
     write2db, used_mac = [], []
-
     for hn in mac_info:
         for vlan in hn['mac_dict']:
             for item in hn['mac_dict'][vlan]:
@@ -69,19 +71,22 @@ def parse_arp_mac():
                 used_mac.append(mac_address)
                 # index is wrong: interface_desc[0]
                 interface_desc = basic_dict.get(hn['hostname'], {}).get(interface_name.lower(), ['', ''])
-
+                # two forms:1. ['h1,h2','ip','index']  2. ['h1','ip','index']
                 gateway_info = arp_dict.get(mac_address, [])
 
                 if len(gateway_info) == 0:
-
                     write2db.append(
                         ('', mac_address, vlan, hn['hostname'], interface_name, '',
                          interface_desc[1], ''))
-                # filter by the corresponding interface of vlan, how?
+                # filter by the corresponding interface of vlan
                 else:
+                    # use comma to separate gateway and save it as one.
                     for gw_ip_index in gateway_info:
-
-                        if vlan == basic_dict[gw_ip_index[0]].get(gw_ip_index[-1]):
+                        if ',' in gw_ip_index[0]:
+                            write2db.append(
+                                (gw_ip_index[1], mac_address, vlan, hn['hostname'], interface_name, gw_ip_index[-1],
+                                 interface_desc[1], gw_ip_index[0]))
+                        elif vlan == basic_dict[gw_ip_index[0]].get(gw_ip_index[-1]):
                             write2db.append(
                                 (gw_ip_index[1], mac_address, vlan, hn['hostname'], interface_name, gw_ip_index[-1],
                                  interface_desc[1], gw_ip_index[0]))
@@ -115,7 +120,23 @@ def insert_db(write2db):
     con.close()
 
 
+def write_xls(data):
+    # set write_only for large data set.
+    wb = Workbook(write_only=True)
+    ws = wb.create_sheet()
+    ws.append(['IP', 'MAC', 'Vlan', 'hostname', 'interface', 'int_desc', 'gateway'])
+
+    # separate large list to small list, unnecessary for this situation though.
+    # for i in range(0, len(data), size):
+    #     part = data[i:i + size]
+    for item in data:
+        ws.append(item)
+
+    wb.save("sample.xlsx")
+
+
 if __name__ == '__main__':
     parse_result = parse_arp_mac()
-    print len(parse_result)
+    # print len(parse_result)
     insert_db(parse_result)
+    # write_xls(parse_result)
