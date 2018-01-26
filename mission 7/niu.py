@@ -13,20 +13,19 @@ def read_file(filename):
         return json.load(f)[0].get('data')
 
 
-def generate_basic_dict():
+def generate_basic_dict(basic_info):
     """
     generate a dict according to basic_info.json, provide searching for interface description
-    :return: a dict like {'JD70SW24-B1-VDC2': {'ethernet4/11': 'this is description'}}
+    :param basic_info: raw file
+    :return: a dict like {'JD70SW24-B1-VDC2': {'ethernet4/11': 'this is description',{'12331221':3066}}
     """
-
-    basic_info = read_file('basic_info.json')
 
     basic_dict = {}
     for hn in basic_info:
         basic_dict.setdefault(hn.get('hostname'), {})
         for index in hn.get('if_index'):
             if index in hn.get('if_desc'):
-                # index: this index is wrong.
+                # index in arp_info
                 basic_dict[hn.get('hostname')].update(
                     {hn.get('if_index').get(index).lower(): [index, hn.get('if_desc').get(index)],
                      index: extract_vlan_num(hn.get('if_index').get(index))})
@@ -34,20 +33,12 @@ def generate_basic_dict():
     return basic_dict
 
 
-def extract_vlan_num(s):
-    r = re.compile(r"Vlan\s?(\d+)", re.I)
-    result = r.findall(s)
-    if result:
-        return result[0]
-    else:
-        return ''
-
-
-def parse_arp_mac():
-    mac_info = read_file('mac_info.json')
-    arp_info = read_file('arp_info.json')
-
-    basic_dict = generate_basic_dict()
+def generate_arp_dict(arp_info):
+    """
+    generate arp dict according to arp_info.json
+    :param arp_info: raw file
+    :return: dict
+    """
     arp_dict = {}
     # generate arp_dict, the key is mac address, value is ['hostname1, hostname2', 'IP', 'index'].
     for arp_list in arp_info:
@@ -55,7 +46,7 @@ def parse_arp_mac():
             ip, mac, index = i
 
             arp_dict.setdefault(i[1], [])
-            # Merge gateway here is probably a bad idea.
+            # Merge gateway.
             if len(arp_dict[mac]) == 0:
                 arp_dict[mac].append([arp_list.get('hostname'), ip, index])
             elif ip == arp_dict[mac][0][1] and index == arp_dict[mac][0][2]:
@@ -63,13 +54,39 @@ def parse_arp_mac():
             else:
                 arp_dict[mac].append([arp_list.get('hostname'), ip, index])
 
+    return arp_dict
+
+
+def extract_vlan_num(vlan_str):
+    """
+    extract vlan numbers
+    :param vlan_str: vlan string
+    :return: int, vlan number
+    """
+    regex = re.compile(r"Vlan\s?(\d+)", re.I)
+    result = regex.findall(vlan_str)
+    if result:
+        return result[0]
+    else:
+        return ''
+
+
+def parse_arp_mac(arp_info, arp_dict, basic_dict, mac_info, ):
+    """
+    parse arp and mac in three different situation
+    :param arp_info: arp_info.json
+    :param arp_dict: generated arp_dict mapping
+    :param basic_dict: generated basic_dict mapping
+    :param mac_info: mac_info.json
+    :return: result to be written to database or Excel
+    """
     write2db, used_mac = [], []
     for hn in mac_info:
         for vlan in hn['mac_dict']:
             for item in hn['mac_dict'][vlan]:
                 mac_address, interface_name = item[0], item[-1]
                 used_mac.append(mac_address)
-                # index is wrong: interface_desc[0]
+                # index shouldn't be interface_desc[0]
                 interface_desc = basic_dict.get(hn['hostname'], {}).get(interface_name.lower(), ['', ''])
                 # two forms:1. ['h1,h2','ip','index']  2. ['h1','ip','index']
                 gateway_info = arp_dict.get(mac_address, [])
@@ -121,10 +138,15 @@ def insert_db(write2db):
 
 
 def write_xls(data):
+    """
+    write data to xls
+    :param data: tuple inside of list
+    :return: None
+    """
     # set write_only for large data set.
     wb = Workbook(write_only=True)
     ws = wb.create_sheet()
-    ws.append(['IP', 'MAC', 'Vlan', 'hostname', 'interface', 'int_desc', 'gateway'])
+    ws.append(['IP', 'MAC', 'Vlan', 'hostname', 'interface', 'index', 'int_desc', 'gateway'])
 
     # separate large list to small list, unnecessary for this situation though.
     # for i in range(0, len(data), size):
@@ -136,7 +158,20 @@ def write_xls(data):
 
 
 if __name__ == '__main__':
-    parse_result = parse_arp_mac()
-    # print len(parse_result)
-    insert_db(parse_result)
-    # write_xls(parse_result)
+    # read files
+    mac_raw = read_file('mac_info.json')
+    arp_raw = read_file('arp_info.json')
+    basic_raw = read_file('basic_info.json')
+
+    # generate two dict maps.
+    basic_map = generate_basic_dict(basic_raw)
+    arp_map = generate_arp_dict(arp_raw)
+
+    # combine arp with mac
+    parse_result = parse_arp_mac(arp_raw, arp_map, basic_map, mac_raw)
+
+    # insert into database
+    # insert_db(parse_result)
+
+    # write into Excel
+    write_xls(parse_result)
