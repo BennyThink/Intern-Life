@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.2.2/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+    <script src="https://unpkg.com/element-ui@2.2.2/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-menu class="el-menu-demo" mode="horizontal">
+        <el-menu-item index="1">Cisco</el-menu-item>
+    </el-menu>
+
+    <!--搜索框-->
+
+    <el-input @input="search" v-model="searchQuery" placeholder="请输入内容"></el-input>
+
+
+    <template>
+        <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border
+                  :filter-key="searchQuery" style="width: 100%">
+            <el-table-column v-for="{prop, label} in colConfigs" :key="prop" :prop="prop"
+                             :label="label"></el-table-column>
+
+        </el-table>
+        <div class="block">
+            <el-pagination @size-change="handleSizeChange"
+                           @current-change="handleCurrentChange"
+                           :current-page="currentPage"
+                           :page-sizes="[5, 10, 50, 100]"
+                           :page-size="pagesize"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="tableData.length"
+                           align="right">
+            </el-pagination>
+        </div>
+    </template>
+</div>
+</body>
+
+
+<script>
+
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            colConfigs: [
+                {prop: 'id', label: 'ID'},
+                {prop: 'devicename', label: 'Device name'},
+                {prop: 'ip', label: 'IP'},
+                {prop: 'location', label: 'Location'},
+                {prop: 'area', label: 'Area'},
+                {prop: 'hardware', label: 'Hardware'},
+                {prop: 'platform', label: 'Platform'},
+                {prop: 'version', label: 'Version'},
+                {prop: 'sn', label: 'S/N'},
+                {prop: 'slot0', label: 'Slot0'},
+                {prop: 'memory', label: 'Memory'},
+                {prop: 'bootflash', label: 'Bootflash'}
+            ],
+            searchQuery: '',
+            tableData: [],
+            currentPage: 1,
+            pagesize: 5,
+            dialogTableVisible: false,
+            dialogFormVisible: false,
+            form: {
+                name: '',
+                region: '',
+                date1: '',
+                date2: '',
+                delivery: false,
+                type: [],
+                resource: '',
+                desc: ''
+            },
+            formLabelWidth: '120px'
+        },
+
+        methods: {
+            handleEdit(index, row) {
+                console.log(index, row);
+            },
+            handleDelete(index, row) {
+                console.log(index, row);
+            },
+            handleSizeChange: function (size) {
+                this.pagesize = size;
+            },
+            handleCurrentChange: function (currentPage) {
+                this.currentPage = currentPage;
+            },
+            search(v) {
+                if (v) {
+                    searchlist = [];
+                    var ss = [];
+                    test = backup;
+                    // 过滤需要的数据this.tableData
+                    test.forEach(function (item) {
+                        // 检测用户名
+                        if (item.devicename.indexOf(v) > -1) {
+                            if (searchlist.indexOf(item.devicename) == -1) {
+                                searchlist.push(item.devicename);
+                            }
+                            ss.push(item);
+                        } else if (item.area.indexOf(v) > -1) {
+                            // 检测邮箱
+                            if (searchlist.indexOf(item.area) == -1) {
+                                searchlist.push(item.area);
+                            }
+                            ss.push(item);
+                        }
+                    });
+                }
+                else {
+                    ss = backup;
+                }
+
+                this.tableData = ss;
+
+
+            }
+        }
+    });
+
+
+    axios.get('http://127.0.0.1:8888/list/').then(function (res) {
+        //console.log(res);
+        app.tableData = res.data;
+
+        backup = JSON.parse(JSON.stringify(res.data));
+    })
+</script>
+
+</html>
