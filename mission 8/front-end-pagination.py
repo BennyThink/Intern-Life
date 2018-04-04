@@ -101,15 +101,8 @@ def get_data():
         es_dic = dict(zip(col_field, data[i]))
         bulk_dic.append(es_dic)
 
-    s = [
-        {"name": 'Chuck Norris2', "power": "Infinity"},
-        {"name": 'Bruce Lee', "power": "9000"},
-        {"name": 'Jackie Chan', "power": "7000"},
-        {"name": 'Jet Li', "power": "8000"}
-
-    ]
-
     return json.dumps(bulk_dic)
+
 
 if __name__ == '__main__':
     app = make_app()

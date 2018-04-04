@@ -4,46 +4,93 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.2.2/lib/theme-chalk/index.css">
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
-
     <script src="https://unpkg.com/element-ui@2.2.2/lib/index.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js"
+            integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl"
+            crossorigin="anonymous"></script>
 </head>
 <body>
 <div id="app">
-    <el-menu class="el-menu-demo" mode="horizontal">
-        <el-menu-item index="1">Cisco</el-menu-item>
-    </el-menu>
+    <el-container>
+        <el-header>
+            <el-header style="text-align: left; font-size: 12px">
+                <span style="font-size: 20px;color: #409eff">这是什么
 
-    <!--搜索框-->
+                      <el-tooltip class="item" effect="dark" content="我也不知道这是啥" placement="right-end">
+      <el-button type="text"><i class="el-icon-question"></i></el-button>
+    </el-tooltip>
+                    </span>
+            </el-header>
+        </el-header>
 
-    <el-input @input="search" v-model="searchQuery" placeholder="请输入内容"></el-input>
+        <el-container>
+            <el-aside width="200px">
+                <el-menu>
+                    <!--:default-openeds="['1', '3']"-->
+                    <!--<el-submenu index="1">-->
+                    <!--<template slot="title"><i class="el-icon-message"></i>导航一</template>-->
+                    <a href="/" style="text-decoration: none">
+                        <el-menu-item index="1-1"><i class="el-icon-info"></i> 选项1</el-menu-item>
+                    </a>
+                    <a href="#" style="text-decoration: none">
+                        <el-menu-item index="1-1"><i class="el-icon-news"></i> 选项2</el-menu-item>
+                    </a>
+                    <!--</el-submenu>-->
+                </el-menu>
+            </el-aside>
 
 
-    <template>
-        <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border
-                  :filter-key="searchQuery" style="width: 100%">
-            <el-table-column v-for="{prop, label} in colConfigs" :key="prop" :prop="prop"
-                             :label="label"></el-table-column>
+            <el-main>
+                <div style="float: right; display: inline-block;margin-bottom:0.2em">
+                    <div class="el-input el-input--medium el-input--prefix">
+                        <el-input @input="search" v-model="searchQuery" placeholder="请输入内容"
+                                  prefix-icon="el-icon-search">
+                        </el-input>
+                        <span class="el-input__prefix"><i class="el-input__icon el-icon-search"></i></span>
+                    </div>
+                </div>
+                <br>
 
-        </el-table>
-        <div class="block">
-            <el-pagination @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange"
-                           :current-page="currentPage"
-                           :page-sizes="[5, 10, 50, 100]"
-                           :page-size="pagesize"
-                           layout="total, sizes, prev, pager, next, jumper"
-                           :total="tableData.length"
-                           align="right">
-            </el-pagination>
-        </div>
-    </template>
+                <template>
+                    <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border
+                              :filter-key="searchQuery" style="width: 100%">
+                        <el-table-column v-for="{prop, label} in colConfigs" :key="prop" :prop="prop"
+                                         :label="label"></el-table-column>
+                    </el-table>
+                    <div class="block">
+                        <el-pagination @size-change="handleSizeChange"
+                                       @current-change="handleCurrentChange"
+                                       :current-page="currentPage"
+                                       :page-sizes="[5, 10, 50, 100]"
+                                       :page-size="pagesize"
+                                       layout="total, sizes, prev, pager, next, jumper"
+                                       :total="tableData.length"
+                                       align="right">
+                        </el-pagination>
+                    </div>
+                </template>
+            </el-main>
+        </el-container>
+    </el-container>
+
 </div>
 </body>
+<style>
+    ._p-filter-matched {
+        background-color: #ff0;
+        color: #000;
+    }
 
+    .el-header {
+        background-color: #ffffff;
+        color: #333;
+        line-height: 60px;
+        padding: 0 12px;
+    }
 
+</style>
 <script>
-
 
     var app = new Vue({
         el: '#app',
@@ -68,16 +115,6 @@
             pagesize: 5,
             dialogTableVisible: false,
             dialogFormVisible: false,
-            form: {
-                name: '',
-                region: '',
-                date1: '',
-                date2: '',
-                delivery: false,
-                type: [],
-                resource: '',
-                desc: ''
-            },
             formLabelWidth: '120px'
         },
 
@@ -94,35 +131,55 @@
             handleCurrentChange: function (currentPage) {
                 this.currentPage = currentPage;
             },
-            search(v) {
-                if (v) {
-                    searchlist = [];
-                    var ss = [];
+            search(kw) {
+                column = ['devicename',
+                    'area',
+                    'ip',
+                    'bootflash',
+                    'hardware',
+                    'platform',
+                    'version',
+                    'location',
+                    'memory',
+                    'slot0',
+                    'id',
+                    'sn'];
+                if (kw) {
+                    kw = kw.replace(/\s+/g, ' ');
+                    filters = [];
+                    final = [];
                     test = backup;
-                    // 过滤需要的数据this.tableData
-                    test.forEach(function (item) {
-                        // 检测用户名
-                        if (item.devicename.indexOf(v) > -1) {
-                            if (searchlist.indexOf(item.devicename) == -1) {
-                                searchlist.push(item.devicename);
+                    if (kw.trim().length !== 0)
+                        filters = kw.trim().split(" ");
+
+                    test.forEach(function (key_val) {
+                        // key_val是一整个
+                        total = filters.length;
+                        count = 0;
+                        filters.forEach(function (keywords) {
+
+                            // D1 F2
+                            for (var i = 0; i < column.length; i++) {
+                                //column.forEach(function (key) {
+                                if (key_val[column[i]].toString().indexOf(keywords) !== -1) {
+                                    count += 1;
+                                    break;
+                                }
                             }
-                            ss.push(item);
-                        } else if (item.area.indexOf(v) > -1) {
-                            // 检测邮箱
-                            if (searchlist.indexOf(item.area) == -1) {
-                                searchlist.push(item.area);
-                            }
-                            ss.push(item);
-                        }
+                            if (count >= total)
+                                final.push(key_val)
+
+
+                        })
                     });
+
+
                 }
                 else {
-                    ss = backup;
+                    final = backup;
                 }
 
-                this.tableData = ss;
-
-
+                this.tableData = final;
             }
         }
     });
@@ -131,9 +188,7 @@
     axios.get('http://127.0.0.1:8888/list/').then(function (res) {
         //console.log(res);
         app.tableData = res.data;
-
         backup = JSON.parse(JSON.stringify(res.data));
     })
 </script>
-
 </html>
