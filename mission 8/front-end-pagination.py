@@ -2,7 +2,7 @@
 # coding:utf-8
 
 # Intern-Life - fast.py
-# 2017/12/15 10:56
+# 2018/04/10 11:27
 # 
 
 __author__ = 'Benny <benny@bennythink.com>'
@@ -10,7 +10,6 @@ __author__ = 'Benny <benny@bennythink.com>'
 import tornado.ioloop
 import tornado.web
 import tornado.autoreload
-from tornado.escape import xhtml_escape as escape
 import tornado.escape
 import os
 import mysql.connector
@@ -24,49 +23,11 @@ class Retreive(tornado.web.RequestHandler):
 
     def get(self):
         self.set_header("Content-Type", "application/json")
-        self.set_header("Access-Control-Allow-Origin", "*")  # 这个地方可以写域名
+        self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        print 'setting'
+        print('setting')
         self.write(get_data())
-
-
-class Upsert(tornado.web.RequestHandler):
-
-    def get(self):
-        self.render('show.html')
-
-    def post(self):
-        col1 = escape(self.get_argument('col1'))
-        col2 = escape(self.get_argument('col2'))
-        col3 = escape(self.get_argument('col3'))
-        col4 = escape(self.get_argument('col4'))
-        col5 = escape(self.get_argument('col5'))
-        col6 = escape(self.get_argument('col6'))
-        col7 = escape(self.get_argument('col7'))
-        col8 = escape(self.get_argument('col8'))
-        if 'create' in self.request.uri:
-            cmd = "INSERT INTO gw VALUES (NULL ,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(cmd, (col2, col3, col4, col5, col6, col7, col8))
-        else:
-            cmd = "UPDATE gw SET ip=%s,mac=%s,vlan=%s,hostname=%s,interface=%s ,int_desc=%s ,gateway=%s WHERE id=%s"
-            cur.execute(cmd, (col2, col3, col4, col5, col6, col7, col8, col1))
-
-        con.commit()
-        self.redirect('/')
-
-
-class Delete(tornado.web.RequestHandler):
-
-    def get(self):
-        self.render('show.html')
-
-    def post(self):
-        cmd = "DELETE FROM gw WHERE id=%s"
-        col1 = escape(self.get_argument('col1'))
-        cur.execute(cmd, (col1,))
-        con.commit()
-        self.redirect('/')
 
 
 class Index(tornado.web.RequestHandler):
@@ -77,10 +38,7 @@ class Index(tornado.web.RequestHandler):
 
 def make_app():
     return tornado.web.Application([
-        (r'/upsert/create/', Upsert),
         (r'/list/', Retreive),
-        (r'/upsert/update/', Upsert),
-        (r'/delete/', Delete),
         (r'/', Index),
     ],
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
