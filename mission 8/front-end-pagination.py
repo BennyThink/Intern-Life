@@ -23,10 +23,11 @@ class Retreive(tornado.web.RequestHandler):
 
     def get(self):
         self.set_header("Content-Type", "application/json")
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        print('setting')
+        # I'm lazy, what if I want to click the html file:-)
+        # self.set_header("Access-Control-Allow-Origin", "*")
+        # self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        # self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        # print('setting')
         self.write(get_data())
 
 
@@ -48,6 +49,11 @@ def make_app():
 
 
 def get_data():
+    try:
+        con.ping()
+    except mysql.connector.errors.InterfaceError:
+        con.reconnect()
+
     cur.execute('SHOW COLUMNS from switch_device')
     col_data = cur.fetchall()
     col_field = [i[0] for i in col_data]
