@@ -62,7 +62,7 @@
                                        :page-sizes="[5, 10, 50, 100]"
                                        :page-size="pagesize"
                                        layout="total, sizes, prev, pager, next, jumper"
-                                       :total="tableData.length"
+                                       :total="length"
                                        align="right">
                         </el-pagination>
                     </div>
@@ -94,6 +94,7 @@
             ],
             searchQuery: '',
             tableData: [],
+            length: 0,
             currentPage: 1,
             pagesize: 5,
             dialogTableVisible: false,
@@ -144,8 +145,8 @@
                     data
                 })
                     .then(function (response) {
-                        //app.tableData = response.data.data
-                        //app.length = response.data.total
+                        app.tableData = response.data.data
+                        app.length = response.data.total
                     })
                     .catch(function (error) {
                         console.log(error);
