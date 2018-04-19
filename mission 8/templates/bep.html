@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.2.2/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui@2.2.2/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-container>
+        <el-header>
+            <el-header style="text-align: left; font-size: 12px">
+                <span style="font-size: 20px;color: #409eff">???
+
+                      <el-tooltip class="item" effect="dark" content="我也不知道这是啥" placement="right-end">
+      <el-button type="text"><i class="el-icon-question"></i></el-button>
+    </el-tooltip>
+                    </span>
+            </el-header>
+        </el-header>
+
+        <el-container>
+            <el-aside width="200px">
+                <el-menu>
+                    <!--:default-openeds="['1', '3']"-->
+                    <!--<el-submenu index="1">-->
+                    <!--<template slot="title"><i class="el-icon-message"></i>导航一</template>-->
+                    <a href="/" style="text-decoration: none">
+                        <el-menu-item index="1-1"><i class="el-icon-info"></i> 选项1</el-menu-item>
+                    </a>
+                    <a href="#" style="text-decoration: none">
+                        <el-menu-item index="1-1"><i class="el-icon-news"></i> 选项2</el-menu-item>
+                    </a>
+                    <!--</el-submenu>-->
+                </el-menu>
+            </el-aside>
+
+
+            <el-main>
+                <div style="float: right; display: inline-block;margin-bottom:0.2em">
+                    <div class="el-input el-input--medium el-input--prefix">
+                        <el-input v-model="searchQuery" placeholder="请输入内容"
+                                  prefix-icon="el-icon-search">
+                        </el-input>
+                        <span class="el-input__prefix"><i class="el-input__icon el-icon-search"></i></span>
+                    </div>
+                </div>
+                <br>
+
+                <template>
+                    <el-table :data="tableData" border
+                              :filter-key="searchQuery" style="width: 100%">
+                        <el-table-column v-for="{prop, label} in colConfigs" :key="prop" :prop="prop"
+                                         :label="label"></el-table-column>
+                    </el-table>
+                    <div class="block">
+                        <el-pagination @size-change="handleSizeChange"
+                                       @current-change="handleCurrentChange"
+                                       :current-page="currentPage"
+                                       :page-sizes="[5, 10, 50, 100]"
+                                       :page-size="pagesize"
+                                       layout="total, sizes, prev, pager, next, jumper"
+                                       :total="tableData.length"
+                                       align="right">
+                        </el-pagination>
+                    </div>
+                </template>
+            </el-main>
+        </el-container>
+    </el-container>
+
+</div>
+</body>
+<script>
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            colConfigs: [
+                {prop: 'id', label: 'ID'},
+                {prop: 'devicename', label: 'Device name'},
+                {prop: 'ip', label: 'IP'},
+                {prop: 'location', label: 'Location'},
+                {prop: 'area', label: 'Area'},
+                {prop: 'hardware', label: 'Hardware'},
+                {prop: 'platform', label: 'Platform'},
+                {prop: 'version', label: 'Version'},
+                {prop: 'sn', label: 'S/N'},
+                {prop: 'slot0', label: 'Slot0'},
+                {prop: 'memory', label: 'Memory'},
+                {prop: 'bootflash', label: 'Bootflash'}
+            ],
+            searchQuery: '',
+            tableData: [],
+            currentPage: 1,
+            pagesize: 5,
+            dialogTableVisible: false,
+            dialogFormVisible: false,
+            formLabelWidth: '120px'
+        },
+
+        created: function () {
+
+            var data = {
+                "page": {
+                    "index": this.currentPage,
+                    "size": this.pagesize
+                },
+                "search": {
+                    "value": this.searchQuery
+                }
+            };
+            axios.post('/list/', {
+                data
+            })
+                .then(function (response) {
+                    app.tableData = response.data.data;
+                    app.length = response.data.total
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+
+
+        methods: {
+
+
+            handleSizeChange: function (size) {
+
+                this.pagesize = size;
+                var data = {
+                    "page": {
+                        "index": this.currentPage,
+                        "size": this.pagesize
+                    },
+                    "search": {
+                        "value": this.searchQuery
+                    }
+                };
+                axios.post('/list/', {
+                    data
+                })
+                    .then(function (response) {
+                        //app.tableData = response.data.data
+                        //app.length = response.data.total
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+
+            },
+            handleCurrentChange: function (currentPage) {
+                app.currentPage = currentPage;
+                console.log(app.currentPage)
+                var data = {
+                    "page": {
+                        "index": app.currentPage,
+                        "size": this.pagesize
+                    },
+                    "search": {
+                        "value": this.searchQuery
+                    }
+                };
+                axios.post('/list/', {
+                    data
+                })
+                    .then(function (response) {
+                        app.tableData = response.data.data
+                        app.length = response.data.total
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+
+            },
+            blur(searchQuery) {
+                var data = {
+                    "page": {
+                        "index": this.currentPage,
+                        "size": this.pagesize
+                    },
+                    "search": {
+                        "value": this.searchQuery
+                    }
+                };
+                axios.post('/list/', {
+                    data
+                })
+                    .then(function (response) {
+                        app.tableData = response.data.data
+                        app.length = response.data.total
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+
+
+        }
+    });
+
+
+</script>
+</html>
