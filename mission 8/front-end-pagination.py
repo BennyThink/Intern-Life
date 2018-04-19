@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # coding:utf-8
 
-# Intern-Life - fast.py
-# 2018/04/10 11:27
+# Intern-Life - front-end-pagination.py
+# 2018/04/04 11:27
 # 
 
 __author__ = 'Benny <benny@bennythink.com>'
