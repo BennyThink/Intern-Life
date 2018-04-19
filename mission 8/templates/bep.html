@@ -42,7 +42,8 @@
                 <div style="float: right; display: inline-block;margin-bottom:0.2em">
                     <div class="el-input el-input--medium el-input--prefix">
                         <el-input v-model="searchQuery" placeholder="请输入内容"
-                                  prefix-icon="el-icon-search">
+                                  prefix-icon="el-icon-search"
+                                  @blur="blur">
                         </el-input>
                         <span class="el-input__prefix"><i class="el-input__icon el-icon-search"></i></span>
                     </div>
@@ -128,9 +129,7 @@
 
         methods: {
 
-
             handleSizeChange: function (size) {
-
                 this.pagesize = size;
                 var data = {
                     "page": {

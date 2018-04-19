@@ -14,21 +14,13 @@ import tornado.escape
 import os
 import mysql.connector
 import json
+import config
 
 con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', database='san')
 cur = con.cursor()
 
 
 class Retreive(tornado.web.RequestHandler):
-
-    def get(self):
-        self.set_header("Content-Type", "application/json")
-        # I'm lazy, what if I want to click the html file:-)
-        # self.set_header("Access-Control-Allow-Origin", "*")
-        # self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-        # self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        # print('setting')
-        self.write(get_data())
 
     def post(self):
         self.set_header("Content-Type", "application/json")
@@ -38,8 +30,13 @@ class Retreive(tornado.web.RequestHandler):
         limit = d['data']['page']['size']
         offset = (index - 1) * limit
         keyword = d['data']['search']['value']
+        clause = and_or(keyword)
 
-        sql = 'select * from switch_device  limit %s offset %s' % (limit, offset)
+        if clause:
+            sql = 'select * from switch_device where %s limit %s offset %s' % (clause, limit, offset)
+        else:
+            sql = 'select * from switch_device  limit %s offset %s' % (limit, offset)
+
         self.write(get_data(sql))
 
 
@@ -60,6 +57,22 @@ def make_app():
     )
 
 
+def and_or(value):
+    mid_values = value.split()
+    columns = config.columns
+    and_cond = []
+    text_cond = ''
+    for mid_value in mid_values:
+        or_cond = []
+        for col in columns:
+            or_cond.append(col + ' like "%' + mid_value + '%"')
+        if or_cond:
+            and_cond.append(' OR '.join(or_cond))
+    if and_cond:
+        text_cond = '(' + ') AND ('.join(and_cond) + ')'
+    return text_cond
+
+
 def get_data(sql):
     cur.execute('SHOW COLUMNS from switch_device')
     col_data = cur.fetchall()
@@ -72,7 +85,10 @@ def get_data(sql):
         es_dic = dict(zip(col_field, data[i]))
         bulk_dic.append(es_dic)
 
-    cur.execute('select count(*) from switch_device')
+    # get count of this result
+    sql = sql.replace('*', 'count(*)')
+    sql = sql[:sql.index('limit')]
+    cur.execute(sql)
     count = cur.fetchall()[0][0]
 
     return json.dumps(dict(total=count, data=bulk_dic))

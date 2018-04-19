@@ -1,0 +1,1 @@
+columns = ['devicename', 'ip', 'location']
