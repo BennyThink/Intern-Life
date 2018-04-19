@@ -16,9 +16,6 @@ import mysql.connector
 import json
 import config
 
-con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', database='san')
-cur = con.cursor()
-
 
 class Retreive(tornado.web.RequestHandler):
 
@@ -74,6 +71,9 @@ def and_or(value):
 
 
 def get_data(sql):
+    con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', database='san')
+    cur = con.cursor()
+
     cur.execute('SHOW COLUMNS from switch_device')
     col_data = cur.fetchall()
     col_field = [i[0] for i in col_data]
@@ -91,6 +91,7 @@ def get_data(sql):
     cur.execute(sql)
     count = cur.fetchall()[0][0]
 
+    con.close()
     return json.dumps(dict(total=count, data=bulk_dic))
 
 
