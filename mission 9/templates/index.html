@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.2.2/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui@2.2.2/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-container>
+        <el-header>
+            <el-header style="text-align: left; font-size: 12px">
+                <span style="font-size: 20px;color: #409eff">Cisco
+
+                      <el-tooltip class="item" effect="dark" content="我也不知道这是啥" placement="right-end">
+      <el-button type="text"><i class="el-icon-question"></i></el-button>
+    </el-tooltip>
+                    </span>
+            </el-header>
+        </el-header>
+
+        <el-container>
+            <el-aside width="200px">
+                <el-menu>
+
+                    <a href="/" style="text-decoration: none">
+                        <el-menu-item index="1-1"><i class="el-icon-info"></i> 选项1</el-menu-item>
+                    </a>
+                    <a href="#" style="text-decoration: none">
+                        <el-menu-item index="1-1"><i class="el-icon-news"></i> 选项2</el-menu-item>
+                    </a>
+
+                </el-menu>
+            </el-aside>
+
+
+            <el-main>
+                <div style="margin-bottom:0.3em">
+
+                    <el-tag type="success">IP：127.0.0.1</el-tag>
+                    <el-tag type="info">端口：3306</el-tag>
+                    <el-tag type="warning">用户名：root</el-tag>
+                    <el-tag type="danger">密码：root</el-tag>
+                </div>
+
+
+                <div style="float: left; display: inline-block;margin-bottom:0.2em">
+                    <el-button type="primary" size="medium" icon="el-icon-plus" @click="showDbDialog()">增加
+                    </el-button>
+                </div>
+
+
+                <el-dialog title="数据库信息" :visible.sync="dialogAddDB">
+                    数据库名
+                    <div style="margin-bottom: 0.2em">
+                        <el-input v-model="input_db"></el-input>
+                    </div>
+                    IP地址
+                    <div style="margin-bottom: 0.2em">
+                        <el-input v-model="input_ip" placeholder="169.254.0.0"></el-input>
+                    </div>
+                    端口
+                    <div style="margin-bottom: 0.2em">
+                        <el-input v-model="input_port" placeholder="65536"></el-input>
+                    </div>
+                    用户名
+                    <div style="margin-bottom: 0.2em">
+                        <el-input v-model="input_username" placeholder="ttt"></el-input>
+                    </div>
+                    密码
+                    <div style="margin-bottom: 0.2em">
+                        <el-input v-model="input_password" placeholder="pwd"></el-input>
+                    </div>
+
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogAddDB = false">取 消</el-button>
+                        <el-button type="primary" @click="addDbAction">确 定</el-button>
+                    </div>
+                </el-dialog>
+
+
+                <el-dialog title="增加表信息" :visible.sync="dialogAddTable">
+                    <div style="display:inline-block;margin-bottom: 0.2em">
+                        表名
+                        <el-input v-model="input"></el-input>
+                    </div>
+
+                    <div style="display:inline-block;margin-bottom: 0.2em">
+                        注释
+                        <el-input v-model="input"></el-input>
+                    </div>
+
+                    <br>
+                    <el-row class="demo-autocomplete">
+
+                        <el-col :span="7">
+                            <div style="display:inline-block;margin-bottom: 0.2em">
+                                <div class="sub-title">列名称</div>
+                                <el-input v-model="input"></el-input>
+                            </div>
+                        </el-col>
+
+                        <el-col :span="7">
+                            <div class="sub-title">数据类型</div>
+                            <el-autocomplete
+                                    class="inline-input"
+                                    v-model="selectDataType"
+                                    :fetch-suggestions="querySearch"
+                                    placeholder="请输入内容"
+                                    :trigger-on-focus="false"
+
+                            ></el-autocomplete>
+                        </el-col>
+
+                        <el-col :span="7">
+                            <div style="display:inline-block;margin-bottom: 0.2em">
+                                <div class="sub-title">默认</div>
+                                <el-input v-model="input"></el-input>
+                            </div>
+                        </el-col>
+
+                        <el-col :span="1">
+                            <div style="display:inline-block;margin-bottom: 0.2em">
+                                <div class="sub-title">&nbsp;</div>
+                                <el-button type="primary" plain style="display: inline" icon="el-icon-plus"
+                                           @click="addColumnAction"></el-button>
+                            </div>
+                        </el-col>
+
+                    </el-row>
+
+
+                    <el-checkbox-group v-model="checkList">
+                        <el-checkbox label="非空"></el-checkbox>
+                        <el-checkbox label="自增"></el-checkbox>
+                        <el-checkbox label="唯一"></el-checkbox>
+                        <el-checkbox label="主键"></el-checkbox>
+                    </el-checkbox-group>
+
+                    SQL语句
+                    <el-input
+                            type="textarea"
+                            :rows="5"
+                            placeholder="CREATE TABLE ... "
+                            v-model="sqlScript">
+                    </el-input>
+
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogAddTable = false">取 消</el-button>
+                        <el-button type="primary" @click="addTableAction">确 定</el-button>
+                    </div>
+                </el-dialog>
+
+                <div style="float: right; display: inline-block;margin-bottom:0.2em">
+                    <div class="el-input el-input--medium el-input--prefix">
+                        <el-input @input="search" v-model="searchQuery" placeholder="请输入内容"
+                                  prefix-icon="el-icon-search">
+                        </el-input>
+                        <span class="el-input__prefix"><i class="el-input__icon el-icon-search"></i></span>
+                    </div>
+                </div>
+
+                <template>
+
+                    <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border
+                              :filter-key="searchQuery" style="width: 100%">
+
+
+                        <el-table-column label="数据库名">
+                            <template slot-scope="scope">
+                                <el-popover trigger="hover" placement="top">
+                                    浮动内容 {{ scope.row.dbname }}
+                                    <div slot="reference" class="name-wrapper">
+                                        <el-tag size="medium">{{ scope.row.dbname }}</el-tag>
+                                    </div>
+                                </el-popover>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column v-for="{prop, label} in colConfigs" :key="prop" :prop="prop"
+                                         :label="label"></el-table-column>
+
+
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button
+                                        size="mini" icon="el-icon-plus"
+                                        @click="handleAdd(scope.$index, scope.row)">
+                                </el-button>
+                                <el-button
+                                        size="mini" icon="el-icon-edit"
+                                        @click="handleEdit(scope.$index, scope.row)">
+                                </el-button>
+                                <el-button
+                                        size="mini" icon="el-icon-delete"
+                                        type="danger"
+                                        @click="handleDelete(scope.$index, scope.row)">
+                                </el-button>
+                            </template>
+                        </el-table-column>
+
+
+                    </el-table>
+
+                    <div class="block">
+                        <el-pagination @size-change="handleSizeChange"
+                                       @current-change="handleCurrentChange"
+                                       :current-page="currentPage"
+                                       :page-sizes="[5, 10, 50, 100]"
+                                       :page-size="pagesize"
+                                       layout="total, sizes, prev, pager, next, jumper"
+                                       :total="tableData.length"
+                                       align="right">
+                        </el-pagination>
+                    </div>
+                </template>
+
+            </el-main>
+        </el-container>
+    </el-container>
+
+</div>
+</body>
+
+<script>
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            colConfigs: [
+                // {prop: 'id', label: 'ID'},
+                // {prop: 'dbname', label: '数据库名'},
+                {prop: 'ip', label: 'IP地址'},
+                {prop: 'port', label: '端口'},
+                {prop: 'username', label: '用户名'},
+                {prop: 'password', label: '密码'},
+
+            ],
+            searchQuery: '',
+            tableData: [],
+            input_db: '',
+            input_ip: '',
+            input_port: '',
+            input_username: '',
+            input_password: '',
+            currentPage: 1,
+            pagesize: 5,
+            dialogAddDB: false,
+            dialogAddTable: false,
+            selectDataType: '',
+            formLabelWidth: '120px',
+            dataType: [],
+            input: '',
+            sqlScript: '',
+            checkList: [],
+        },
+
+        methods: {
+
+            handleSizeChange: function (size) {
+                this.pagesize = size;
+            },
+            handleCurrentChange: function (currentPage) {
+                this.currentPage = currentPage;
+            },
+
+            showDbDialog() {
+                //alert('添加');
+                this.dialogAddDB = true;
+                this.input_db = '';
+                this.input_ip = '';
+                this.input_port = '';
+                this.input_username = '';
+                this.input_password = ''
+            },
+
+            handleAdd(index, row) {
+                console.log(index, row);
+                this.dialogAddTable = true;
+            },
+            handleEdit(index, row) {
+                console.log(index, row);
+                this.dialogAddDB = true;
+                this.input_db = row.dbname;
+                this.input_ip = row.ip;
+                this.input_port = row.port;
+                this.input_username = row.username;
+                this.input_password = row.password
+
+            },
+            handleDelete(index, row) {
+
+                this.$confirm('此操作将删除' + row.dbname + ', 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+            },
+
+            search(kw) {
+                column = ['devicename',
+                    'area',
+                    'ip',
+                    'bootflash',
+                    'hardware',
+                    'platform',
+                    'version',
+                ];
+
+                if (kw) {
+                    kw = kw.replace(/\s+/g, ' ');
+                    filters = [];
+                    final = [];
+                    test = backup;
+                    if (kw.trim().length !== 0)
+                        filters = kw.trim().split(" ");
+
+                    test.forEach(function (key_val) {
+                        // key_val是一整个
+                        total = filters.length;
+                        count = 0;
+                        filters.forEach(function (keywords) {
+
+                            // D1 F2
+                            for (var i = 0; i < column.length; i++) {
+                                //column.forEach(function (key) {
+                                if (key_val[column[i]].toString().indexOf(keywords) !== -1) {
+                                    count += 1;
+                                    break;
+                                }
+                            }
+                            if (count >= total)
+                                final.push(key_val)
+
+
+                        })
+                    });
+
+
+                }
+                else {
+                    final = backup;
+                }
+
+                this.tableData = final;
+            },
+
+            addDbAction() {
+                //点击确定之后才会触发
+                this.$message.error(this.input_ip);
+                // this.$message.success(this.input_db);
+            },
+            addTableAction() {
+                this.$message.success('增加表');
+            },
+            addColumnAction() {
+                this.sqlScript = '啊哈哈哈哈' + this.checkList
+            },
+            //联想自动补全数据类型
+            querySearch(queryString, cb) {
+                var dataType = this.dataType;
+                var results = queryString ? dataType.filter(this.createFilter(queryString)) : dataType;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            createFilter(queryString) {
+                return (dataType) => {
+                    return (dataType.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                };
+            }
+
+        },
+
+        mounted() {
+            this.dataType = [
+                {"value": "INT"},
+                {"value": "VARCHAR()"},
+                {"value": "TEXT"},
+                {"value": "DATE"},
+                {"value": "TINYINT"},
+                {"value": "FLOAT"},
+                {"value": "DOUBLE"},
+                {"value": "DATETIME"},
+                {"value": "TIMESTAMP"},
+                {"value": "BOOLEAN"},
+                {"value": "CHAR"},
+                {"value": "BLOB"},
+                {"value": "REAL"},
+            ];
+
+        }
+    });
+
+    //测试
+    app.tableData = [
+        {
+            "dbname": "test1",
+            "ip": "127.0.0.1",
+            "port": 3306,
+            "username": "root",
+            "password": "toor"
+        },
+        {
+            "dbname": "test2",
+            "ip": "127.0.0.2",
+            "port": 33061,
+            "username": "root2",
+            "password": "toor2"
+        }
+    ];
+
+
+</script>
+</html>
