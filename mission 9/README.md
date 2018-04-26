@@ -19,7 +19,9 @@ Intern-Life
 tooltip 显示表名和描述
 
 ## Steps
-
+http://10.79.148.226:9116/apps/device_center/index.html
+根据json生成前端页面
+表是从数据库读
 
 ## Errors
 

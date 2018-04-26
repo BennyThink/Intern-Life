@@ -24,7 +24,7 @@ class MySQL(object):
         data = cur.fetchall()
 
         for i in range(len(data)):
-            # fix solution 1: move the dic inside in order to make a new dic during each loop
+            # fix solution 1: move the dic inside in order to _make_json a new dic during each loop
             # this is better
             # mongo_dic=dict(id=data[i][0])
             mongo_dic = {}

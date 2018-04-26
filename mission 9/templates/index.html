@@ -12,12 +12,7 @@
     <el-container>
         <el-header>
             <el-header style="text-align: left; font-size: 12px">
-                <span style="font-size: 20px;color: #409eff">Cisco
-
-                      <el-tooltip class="item" effect="dark" content="我也不知道这是啥" placement="right-end">
-      <el-button type="text"><i class="el-icon-question"></i></el-button>
-    </el-tooltip>
-                    </span>
+                <span style="font-size: 20px;color: #409eff">Cisco</span>
             </el-header>
         </el-header>
 
@@ -37,20 +32,6 @@
 
 
             <el-main>
-                <div style="margin-bottom:0.3em">
-
-                    <el-tag type="success">IP：127.0.0.1</el-tag>
-                    <el-tag type="info">端口：3306</el-tag>
-                    <el-tag type="warning">用户名：root</el-tag>
-                    <el-tag type="danger">密码：root</el-tag>
-                </div>
-
-
-                <div style="float: left; display: inline-block;margin-bottom:0.2em">
-                    <el-button type="primary" size="medium" icon="el-icon-plus" @click="showDbDialog()">增加
-                    </el-button>
-                </div>
-
 
                 <el-dialog title="数据库信息" :visible.sync="dialogAddDB">
                     数据库名
@@ -79,7 +60,6 @@
                         <el-button type="primary" @click="addDbAction">确 定</el-button>
                     </div>
                 </el-dialog>
-
 
                 <el-dialog title="增加表信息" :visible.sync="dialogAddTable">
                     <div style="display:inline-block;margin-bottom: 0.2em">
@@ -138,7 +118,6 @@
                         <el-checkbox label="唯一"></el-checkbox>
                         <el-checkbox label="主键"></el-checkbox>
                     </el-checkbox-group>
-
                     SQL语句
                     <el-input
                             type="textarea"
@@ -153,69 +132,96 @@
                     </div>
                 </el-dialog>
 
-                <div style="float: right; display: inline-block;margin-bottom:0.2em">
-                    <div class="el-input el-input--medium el-input--prefix">
-                        <el-input @input="search" v-model="searchQuery" placeholder="请输入内容"
-                                  prefix-icon="el-icon-search">
-                        </el-input>
-                        <span class="el-input__prefix"><i class="el-input__icon el-icon-search"></i></span>
-                    </div>
+
+                <div style="display: inline-block;margin-bottom:0.2em">
+                    <el-button type="primary" size="medium" icon="el-icon-plus" @click="showDbDialog()">增加
+                    </el-button>
                 </div>
 
+
                 <template>
+                    <el-tabs @tab-click="handleClick" v-model="activeName">
+                        <el-tab-pane v-for="{prop, label} in tabs" :label="label" :name="prop" :key="prop">
 
-                    <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border
-                              :filter-key="searchQuery" style="width: 100%">
+                            <template>
 
 
-                        <el-table-column label="数据库名">
-                            <template slot-scope="scope">
-                                <el-popover trigger="hover" placement="top">
-                                    浮动内容 {{ scope.row.dbname }}
-                                    <div slot="reference" class="name-wrapper">
-                                        <el-tag size="medium">{{ scope.row.dbname }}</el-tag>
-                                    </div>
-                                </el-popover>
+                                <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" border>
+
+
+                                    <el-table-column type="expand">
+
+                                        <!--这里是展开的内容-->
+                                        <template slot-scope="props">
+                                            <!--搜索框-->
+                                            <el-button size="small"
+                                                       type="primary" plain icon="el-icon-plus"
+                                                       @click="handleAdd">
+                                                创建
+                                            </el-button>
+                                            <div style="float: right; display: inline-block;margin-bottom:0.2em">
+                                                <div class="el-input el-input--medium el-input--prefix">
+                                                    <el-input @input="search" v-model="searchQuery" placeholder="请输入内容"
+                                                              prefix-icon="el-icon-search">
+                                                    </el-input>
+                                                    <span class="el-input__prefix"><i
+                                                            class="el-input__icon el-icon-search"></i></span>
+                                                </div>
+                                            </div>
+
+                                            <el-table :data="props.row.tables">
+                                                <el-table-column v-for="{prop, label} in tb_columns" :key="prop"
+                                                                 :prop="prop"
+                                                                 :label="label"></el-table-column>
+
+
+                                                <el-table-column label="操作">
+
+                                                    <template slot-scope="scope">
+
+                                                        <el-button
+                                                                size="mini" icon="el-icon-edit"
+                                                                @click="handleEdit(scope.$index, scope.row)">
+                                                        </el-button>
+                                                        <el-button
+                                                                size="mini" icon="el-icon-delete"
+                                                                type="danger"
+                                                                @click="handleDelete(scope.$index, scope.row)">
+                                                        </el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+
+
+                                        </template>
+                                    </el-table-column>
+
+
+                                    <!--数据库信息-->
+                                    <el-table-column v-for="{prop, label} in db_columns" :key="prop" :prop="prop"
+                                                     :label="label"></el-table-column>
+
+
+                                </el-table>
+
+                                <div class="block">
+                                    <el-pagination @size-change="handleSizeChange"
+                                                   @current-change="handleCurrentChange"
+                                                   :current-page="currentPage"
+                                                   :page-sizes="[5, 10, 50, 100]"
+                                                   :page-size="pagesize"
+                                                   layout="total, sizes, prev, pager, next, jumper"
+                                                   :total="tableData.length"
+                                                   align="right">
+                                    </el-pagination>
+                                </div>
                             </template>
-                        </el-table-column>
-
-                        <el-table-column v-for="{prop, label} in colConfigs" :key="prop" :prop="prop"
-                                         :label="label"></el-table-column>
 
 
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button
-                                        size="mini" icon="el-icon-plus"
-                                        @click="handleAdd(scope.$index, scope.row)">
-                                </el-button>
-                                <el-button
-                                        size="mini" icon="el-icon-edit"
-                                        @click="handleEdit(scope.$index, scope.row)">
-                                </el-button>
-                                <el-button
-                                        size="mini" icon="el-icon-delete"
-                                        type="danger"
-                                        @click="handleDelete(scope.$index, scope.row)">
-                                </el-button>
-                            </template>
-                        </el-table-column>
-
-
-                    </el-table>
-
-                    <div class="block">
-                        <el-pagination @size-change="handleSizeChange"
-                                       @current-change="handleCurrentChange"
-                                       :current-page="currentPage"
-                                       :page-sizes="[5, 10, 50, 100]"
-                                       :page-size="pagesize"
-                                       layout="total, sizes, prev, pager, next, jumper"
-                                       :total="tableData.length"
-                                       align="right">
-                        </el-pagination>
-                    </div>
+                        </el-tab-pane>
+                    </el-tabs>
                 </template>
+
 
             </el-main>
         </el-container>
@@ -229,17 +235,13 @@
     var app = new Vue({
         el: '#app',
         data: {
-            colConfigs: [
-                // {prop: 'id', label: 'ID'},
-                // {prop: 'dbname', label: '数据库名'},
-                {prop: 'ip', label: 'IP地址'},
-                {prop: 'port', label: '端口'},
-                {prop: 'username', label: '用户名'},
-                {prop: 'password', label: '密码'},
-
-            ],
+            tabs: [],
+            db_columns: [],
+            tb_columns: [],
             searchQuery: '',
             tableData: [],
+            data2: [],
+            activeName: 'mysql',
             input_db: '',
             input_ip: '',
             input_port: '',
@@ -255,10 +257,23 @@
             input: '',
             sqlScript: '',
             checkList: [],
+            test: []
         },
 
         methods: {
 
+            handleExpandRow(row, expandedRows) {
+
+                if (expandedRows.length > 1) {
+                    expandedRows.shift()
+                }
+            },
+
+            handleClick(tab, event) {
+                console.log(tab.name);
+
+
+            },
             handleSizeChange: function (size) {
                 this.pagesize = size;
             },
@@ -292,7 +307,7 @@
             },
             handleDelete(index, row) {
 
-                this.$confirm('此操作将删除' + row.dbname + ', 是否继续?', '提示', {
+                this.$confirm('此操作将删除' + row.table_name + ', 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -309,6 +324,7 @@
                 });
 
             },
+
 
             search(kw) {
                 column = ['devicename',
@@ -404,24 +420,24 @@
         }
     });
 
-    //测试
-    app.tableData = [
-        {
-            "dbname": "test1",
-            "ip": "127.0.0.1",
-            "port": 3306,
-            "username": "root",
-            "password": "toor"
-        },
-        {
-            "dbname": "test2",
-            "ip": "127.0.0.2",
-            "port": 33061,
-            "username": "root2",
-            "password": "toor2"
-        }
-    ];
 
+    axios.get('http://127.0.0.1:8888/list/').then(function (res) {
+        app.test = res.data;
+        ttt = [];
+        app.test.forEach(function (d) {
+            ttt.push({
+                "prop": d.prop,
+                "label": d.label
+            });
+
+
+        });
+        app.tabs = ttt;
+        //todo
+        app.db_columns = app.test[1].db_columns;
+        app.tb_columns = app.test[1].tb_columns;
+        app.tableData = app.test[1].databases
+    })
 
 </script>
 </html>

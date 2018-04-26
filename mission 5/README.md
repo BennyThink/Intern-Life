@@ -30,7 +30,7 @@ export ALL_PROXY=socks5://127.0.0.1:1080
 ```
 git clone https://github.com/rofl0r/proxychains-ng
 cd proxychains-ng
-make && make install
+_make_json && _make_json install
 cp src/proxychains.conf /etc/proxychains.conf
 vim /etc/proxychains.conf
 # the last line:

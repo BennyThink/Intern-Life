@@ -8,15 +8,15 @@
   "database": [
     {
       "dbname": "testdb1",
-      "tables": [
-        "tb1",
-        "tb2"
-      ],
+      "tables": {
+        "tb1": "this is table 1",
+        "tb2": "this is table 2"
+      },
       "credentials": {}
     },
     {
       "dbname": "testdb2",
-      "tables": [],
+      "tables": {},
       "credentials": {
         "IP": "127.0.0.2",
         "port": 3307,

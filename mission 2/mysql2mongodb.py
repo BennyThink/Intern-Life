@@ -27,7 +27,7 @@ def read_mysql():
     data = cur.fetchall()
 
     for i in range(len(data)):
-        # fix solution 1: move the dic inside in order to make a new dic during each loop
+        # fix solution 1: move the dic inside in order to _make_json a new dic during each loop
         mongo_dic = {}
         mongo_dic.update(id=data[i][0], devicename=data[i][1], domainid=data[i][2],
                          ip=data[i][3], cp0ip=data[i][4], cp1ip=data[i][5],

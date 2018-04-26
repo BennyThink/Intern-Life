@@ -19,7 +19,7 @@ con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', da
 cur = con.cursor()
 
 
-class Retreive(tornado.web.RequestHandler):
+class Retrieve(tornado.web.RequestHandler):
 
     def get(self):
         self.set_header("Content-Type", "application/json")
@@ -28,7 +28,7 @@ class Retreive(tornado.web.RequestHandler):
         # self.set_header("Access-Control-Allow-Headers", "x-requested-with")
         # self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         print('setting')
-        self.write('')
+        self.write(make_json())
 
 
 class Index(tornado.web.RequestHandler):
@@ -37,9 +37,27 @@ class Index(tornado.web.RequestHandler):
         self.finish(open('templates/index.html').read())
 
 
+def _make_json(db_type):
+    with open('config/%s/column.json' % db_type) as f:
+        column = json.load(f)
+    with open('config/%s/credential.json' % db_type) as f:
+        credential = json.load(f)
+
+    label = 'MySQL' if db_type == 'mysql' else 'MongoDB'
+
+    content = {"prop": db_type, "label": label, "db_columns": column['database'], "tb_columns": column['table'],
+               "databases": [i for i in credential]}
+
+    return content
+
+
+def make_json():
+    return json.dumps([_make_json('mongo'), _make_json('mysql')], ensure_ascii=False).encode('utf-8')
+
+
 def make_app():
     return tornado.web.Application([
-        (r'/list/', Retreive),
+        (r'/list/', Retrieve),
         (r'/', Index),
     ],
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
