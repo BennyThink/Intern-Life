@@ -12,23 +12,20 @@ import tornado.web
 import tornado.autoreload
 import tornado.escape
 import os
-import mysql.connector
 import json
 
-con = mysql.connector.connect(host='127.0.0.1', user='root', password='root', database='san')
-cur = con.cursor()
+PATH = os.path.split(os.path.realpath(__file__))[0]
+STANDARD = dict(mysql='MySQL', mongo='MongoDB', elasticsearch='ElasticSearch', postgresql='PostgreSQL',
+                mariadb='MariaDB', mssql='MS SQL Server', cassandra='Cassandra', redis='Redis')
 
 
 class Retrieve(tornado.web.RequestHandler):
 
     def get(self):
         self.set_header("Content-Type", "application/json")
-        # I'm lazy, what if I want to click the html file:-)
-        # self.set_header("Access-Control-Allow-Origin", "*")
-        # self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-        # self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         print('setting')
-        self.write(make_json())
+        db_config_dir = os.listdir(PATH + '/config')
+        self.write(make_json(db_config_dir))
 
 
 class Index(tornado.web.RequestHandler):
@@ -38,21 +35,20 @@ class Index(tornado.web.RequestHandler):
 
 
 def _make_json(db_type):
-    with open('config/%s/column.json' % db_type) as f:
+    with open(PATH + '/config/%s/column.json' % db_type) as f:
         column = json.load(f)
-    with open('config/%s/credential.json' % db_type) as f:
+    with open(PATH + '/config/%s/credential.json' % db_type) as f:
         credential = json.load(f)
 
-    label = 'MySQL' if db_type == 'mysql' else 'MongoDB'
-
-    content = {"prop": db_type, "label": label, "db_columns": column['database'], "tb_columns": column['table'],
+    content = {"prop": db_type, "label": STANDARD.get(db_type, db_type), "db_columns": column['database'],
+               "tb_columns": column['table'],
                "databases": [i for i in credential]}
 
     return content
 
 
-def make_json():
-    return json.dumps([_make_json('mongo'), _make_json('mysql')], ensure_ascii=False).encode('utf-8')
+def make_json(db_folder):
+    return json.dumps([_make_json(i) for i in db_folder], ensure_ascii=False).encode('utf-8')
 
 
 def make_app():

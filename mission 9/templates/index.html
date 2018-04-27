@@ -240,7 +240,6 @@
             tb_columns: [],
             searchQuery: '',
             tableData: [],
-            data2: [],
             activeName: 'mysql',
             input_db: '',
             input_ip: '',
@@ -257,7 +256,7 @@
             input: '',
             sqlScript: '',
             checkList: [],
-            test: []
+            apiData: []
         },
 
         methods: {
@@ -270,7 +269,14 @@
             },
 
             handleClick(tab, event) {
-                console.log(tab.name);
+                for (var i = 0; i < app.tabs.length; i++) {
+                    if (tab.name === app.tabs[i].prop) {
+                        app.db_columns = app.apiData[i].db_columns;
+                        app.tb_columns = app.apiData[i].tb_columns;
+                        app.tableData = app.apiData[i].databases;
+                        break;
+                    }
+                }
 
 
             },
@@ -422,21 +428,20 @@
 
 
     axios.get('http://127.0.0.1:8888/list/').then(function (res) {
-        app.test = res.data;
-        ttt = [];
-        app.test.forEach(function (d) {
-            ttt.push({
+        app.apiData = res.data;
+        temp = [];
+        app.apiData.forEach(function (d) {
+            temp.push({
                 "prop": d.prop,
                 "label": d.label
             });
-
-
         });
-        app.tabs = ttt;
-        //todo
-        app.db_columns = app.test[1].db_columns;
-        app.tb_columns = app.test[1].tb_columns;
-        app.tableData = app.test[1].databases
+        app.tabs = temp;
+
+        app.activeName = app.apiData[0].prop;
+        app.db_columns = app.apiData[0].db_columns;
+        app.tb_columns = app.apiData[0].tb_columns;
+        app.tableData = app.apiData[0].databases
     })
 
 </script>
