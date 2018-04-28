@@ -34,26 +34,12 @@
             <el-main>
 
                 <el-dialog title="数据库信息" :visible.sync="dialogAddDB">
-                    数据库名
-                    <div style="margin-bottom: 0.2em">
-                        <el-input v-model="input_db"></el-input>
+
+                    <div v-for="(item,index) in dataModel">
+                        {{db_columns[index].label}}
+                        <el-input style="margin-bottom: 0.2em" v-model="dataModel[index].value"></el-input>
                     </div>
-                    IP地址
-                    <div style="margin-bottom: 0.2em">
-                        <el-input v-model="input_ip" placeholder="169.254.0.0"></el-input>
-                    </div>
-                    端口
-                    <div style="margin-bottom: 0.2em">
-                        <el-input v-model="input_port" placeholder="65536"></el-input>
-                    </div>
-                    用户名
-                    <div style="margin-bottom: 0.2em">
-                        <el-input v-model="input_username" placeholder="ttt"></el-input>
-                    </div>
-                    密码
-                    <div style="margin-bottom: 0.2em">
-                        <el-input v-model="input_password" placeholder="pwd"></el-input>
-                    </div>
+
 
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="dialogAddDB = false">取 消</el-button>
@@ -240,7 +226,7 @@
             tb_columns: [],
             searchQuery: '',
             tableData: [],
-            activeName: 'mysql',
+            activeName: '',
             input_db: '',
             input_ip: '',
             input_port: '',
@@ -256,7 +242,9 @@
             input: '',
             sqlScript: '',
             checkList: [],
-            apiData: []
+            apiData: [],
+            dataModel: []
+
         },
 
         methods: {
@@ -276,6 +264,10 @@
                         app.tableData = app.apiData[i].databases;
                         break;
                     }
+                }
+                app.dataModel = [];
+                for (var i = 0; i < app.db_columns.length; i++) {
+                    app.dataModel.push({value: ''});
                 }
 
 
@@ -441,8 +433,14 @@
         app.activeName = app.apiData[0].prop;
         app.db_columns = app.apiData[0].db_columns;
         app.tb_columns = app.apiData[0].tb_columns;
-        app.tableData = app.apiData[0].databases
-    })
+        app.tableData = app.apiData[0].databases;
+
+        for (var i = 0; i < app.db_columns.length; i++) {
+            app.dataModel.push({value: ''});
+        }
+
+    });
+
 
 </script>
 </html>
