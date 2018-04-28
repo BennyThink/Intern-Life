@@ -15,7 +15,7 @@ import tornado.escape
 import tornado.ioloop
 import tornado.web
 
-from db import DatabaseAPI
+import db
 
 PATH = os.path.split(os.path.realpath(__file__))[0]
 STANDARD = dict(mysql='MySQL', mongo='MongoDB', elasticsearch='ElasticSearch', postgresql='PostgreSQL',
@@ -35,10 +35,17 @@ class dbAdd(tornado.web.RequestHandler):
     def post(self):
         d = json.loads(self.request.body)
 
-        try:
-            db = DatabaseAPI(d['host'], d['port'], d['username'], d['password'], d['database'])
-        except:
-            self.set_status(400)
+        if d['database'] == 'mongo':
+            try:
+                database = db.MongoAPI(d['host'], d['port'], d['username'], d['password'], d['database'])
+            except:
+                self.set_status(400)
+
+        elif d['database'] == 'mysql':
+            try:
+                database = db.MySQLAPI(d['host'], d['port'], d['username'], d['password'], d['database'], d['method'])
+            except:
+                self.set_status(400)
 
 
 class Index(tornado.web.RequestHandler):

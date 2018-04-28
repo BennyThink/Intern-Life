@@ -365,6 +365,7 @@
                 dbRequest = {};
                 for (var i = 0; i < this.dataModel.length; i++)
                     dbRequest[this.dataModel[i].value2] = this.dataModel[i].value1
+                dbRequest['database'] = app.activeName;
 
                 msg = this.$message;
                 axios.post('/database/add/', dbRequest)
