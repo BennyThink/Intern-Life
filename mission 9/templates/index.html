@@ -36,8 +36,10 @@
                 <el-dialog title="数据库信息" :visible.sync="dialogAddDB">
 
                     <div v-for="(item,index) in dataModel">
+
                         {{db_columns[index].label}}
-                        <el-input style="margin-bottom: 0.2em" v-model="dataModel[index].value"></el-input>
+
+                        <el-input style="margin-bottom: 0.2em" v-model="dataModel[index].value1"></el-input>
                     </div>
 
 
@@ -227,11 +229,6 @@
             searchQuery: '',
             tableData: [],
             activeName: '',
-            input_db: '',
-            input_ip: '',
-            input_port: '',
-            input_username: '',
-            input_password: '',
             currentPage: 1,
             pagesize: 5,
             dialogAddDB: false,
@@ -248,14 +245,6 @@
         },
 
         methods: {
-
-            handleExpandRow(row, expandedRows) {
-
-                if (expandedRows.length > 1) {
-                    expandedRows.shift()
-                }
-            },
-
             handleClick(tab, event) {
                 for (var i = 0; i < app.tabs.length; i++) {
                     if (tab.name === app.tabs[i].prop) {
@@ -265,11 +254,11 @@
                         break;
                     }
                 }
+
                 app.dataModel = [];
                 for (var i = 0; i < app.db_columns.length; i++) {
-                    app.dataModel.push({value: ''});
+                    app.dataModel.push({value1: '', value2: app.db_columns[i].prop});
                 }
-
 
             },
             handleSizeChange: function (size) {
@@ -373,9 +362,23 @@
             },
 
             addDbAction() {
-                //点击确定之后才会触发
-                this.$message.error(this.input_ip);
-                // this.$message.success(this.input_db);
+                dbRequest = {};
+                for (var i = 0; i < this.dataModel.length; i++)
+                    dbRequest[this.dataModel[i].value2] = this.dataModel[i].value1
+
+                msg = this.$message;
+                axios.post('/database/add/', dbRequest)
+                    .then(function (response) {
+                        msg.success('添加成功');
+                    })
+                    .catch(function (error) {
+                        if (error.toString().indexOf('400') !== -1)
+                            msg.error('输入的参数不正确，连接服务器失败');
+                        else
+                            msg.error('服务器挂啦w(ﾟДﾟ)w');
+
+                    });
+
             },
             addTableAction() {
                 this.$message.success('增加表');
@@ -428,19 +431,18 @@
                 "label": d.label
             });
         });
-        app.tabs = temp;
 
+        app.tabs = temp;
         app.activeName = app.apiData[0].prop;
         app.db_columns = app.apiData[0].db_columns;
         app.tb_columns = app.apiData[0].tb_columns;
         app.tableData = app.apiData[0].databases;
 
         for (var i = 0; i < app.db_columns.length; i++) {
-            app.dataModel.push({value: ''});
+            app.dataModel.push({value1: '', value2: app.db_columns[i].prop});
         }
 
     });
-
 
 </script>
 </html>

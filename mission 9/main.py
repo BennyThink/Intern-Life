@@ -7,12 +7,15 @@
 
 __author__ = 'Benny <benny@bennythink.com>'
 
-import tornado.ioloop
-import tornado.web
+import json
+import os
+
 import tornado.autoreload
 import tornado.escape
-import os
-import json
+import tornado.ioloop
+import tornado.web
+
+from db import DatabaseAPI
 
 PATH = os.path.split(os.path.realpath(__file__))[0]
 STANDARD = dict(mysql='MySQL', mongo='MongoDB', elasticsearch='ElasticSearch', postgresql='PostgreSQL',
@@ -23,9 +26,19 @@ class Retrieve(tornado.web.RequestHandler):
 
     def get(self):
         self.set_header("Content-Type", "application/json")
-        print('setting')
         db_config_dir = os.listdir(PATH + '/config')
         self.write(make_json(db_config_dir))
+
+
+class dbAdd(tornado.web.RequestHandler):
+
+    def post(self):
+        d = json.loads(self.request.body)
+
+        try:
+            db = DatabaseAPI(d['host'], d['port'], d['username'], d['password'], d['database'])
+        except:
+            self.set_status(400)
 
 
 class Index(tornado.web.RequestHandler):
@@ -55,6 +68,7 @@ def make_app():
     return tornado.web.Application([
         (r'/list/', Retrieve),
         (r'/', Index),
+        (r'/database/add/', dbAdd),
     ],
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
         static_path=os.path.join(os.path.dirname(__file__), "static"),
