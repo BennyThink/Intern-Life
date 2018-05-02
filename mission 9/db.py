@@ -7,17 +7,29 @@
 
 __author__ = 'Benny <benny@bennythink.com>'
 
-import mysql.connector
+import pymysql
 import pymongo
+
+ERROR = {1007: 'ProgrammingError 表已存在',
+         1064: ' ProgrammingError 表名不合法',
+         2003: 'OperationalError 连接被拒绝',
+         1045: 'OperationalError 访问拒绝，错误的用户名或密码'}
 
 
 class MySQLAPI:
     def __init__(self, host, port, user, password, database):
-        self.con = mysql.connector.connect(host=host, port=port, user=user, password=password, database=database)
-        self.cur = self.con.cursor()
+        try:
+            self.con = pymysql.connect(host=host, port=int(port), user=user, password=password)
+            self.cur = self.con.cursor()
+            self.cur.execute('CREATE DATABASE %s' % database)
+            self.err_code = '0'
+            self.err_msg = '添加成功'
+        except Exception as e:
+            self.err_code = e[0]
+            self.err_msg = ERROR.get(e[0], e[1])
 
-    def __del__(self):
-        self.con.close()
+    # def __del__(self):
+    #     self.con.close()
 
     def query(self, sql, param=None):
         self.cur.execute(sql, param)

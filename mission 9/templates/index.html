@@ -365,18 +365,19 @@
                 dbRequest = {};
                 for (var i = 0; i < this.dataModel.length; i++)
                     dbRequest[this.dataModel[i].value2] = this.dataModel[i].value1
-                dbRequest['database'] = app.activeName;
+                dbRequest['db_type'] = app.activeName;
 
                 msg = this.$message;
                 axios.post('/database/add/', dbRequest)
                     .then(function (response) {
-                        msg.success('添加成功');
+
+                        if (response.data.status === 0)
+                            msg.success('添加成功');
+                        else
+                            msg.error('添加失败，错误码：' + response.data.status + ' 错误信息：' + response.data.message);
                     })
                     .catch(function (error) {
-                        if (error.toString().indexOf('400') !== -1)
-                            msg.error('输入的参数不正确，连接服务器失败');
-                        else
-                            msg.error('服务器挂啦w(ﾟДﾟ)w');
+                        msg.error('哎呀w(ﾟДﾟ)w');
 
                     });
 

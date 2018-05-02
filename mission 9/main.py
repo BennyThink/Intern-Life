@@ -18,8 +18,8 @@ import tornado.web
 import db
 
 PATH = os.path.split(os.path.realpath(__file__))[0]
-STANDARD = dict(mysql='MySQL', mongo='MongoDB', elasticsearch='ElasticSearch', postgresql='PostgreSQL',
-                mariadb='MariaDB', mssql='MS SQL Server', cassandra='Cassandra', redis='Redis')
+NAME = dict(mysql='MySQL', mongo='MongoDB', elasticsearch='ElasticSearch', postgresql='PostgreSQL',
+            mariadb='MariaDB', mssql='MS SQL Server', cassandra='Cassandra', redis='Redis')
 
 
 class Retrieve(tornado.web.RequestHandler):
@@ -30,22 +30,25 @@ class Retrieve(tornado.web.RequestHandler):
         self.write(make_json(db_config_dir))
 
 
-class dbAdd(tornado.web.RequestHandler):
+class DbAdd(tornado.web.RequestHandler):
 
     def post(self):
         d = json.loads(self.request.body)
-
-        if d['database'] == 'mongo':
+        # db_config_dir = os.listdir(PATH + '/config')
+        if d['db_type'] == 'mongo':
             try:
-                database = db.MongoAPI(d['host'], d['port'], d['username'], d['password'], d['database'])
+                database = db.MongoAPI(d['host'], d['port'], d['username'], d['password'], d['database'], d['method'])
+            except:
+                self.set_status(400)
+        elif d['db_type'] == 'mysql':
+            try:
+                database = db.MySQLAPI(d['host'], d['port'], d['username'], d['password'], d['database'])
             except:
                 self.set_status(400)
 
-        elif d['database'] == 'mysql':
-            try:
-                database = db.MySQLAPI(d['host'], d['port'], d['username'], d['password'], d['database'], d['method'])
-            except:
-                self.set_status(400)
+        elif d['db_type'] == 'redis':
+            database = db.MySQLAPI(d['host'], d['port'], d['username'], d['password'], d['database'])
+            self.write(json.dumps({'status': database.err_code, 'message': database.err_msg}))
 
 
 class Index(tornado.web.RequestHandler):
@@ -60,7 +63,7 @@ def _make_json(db_type):
     with open(PATH + '/config/%s/credential.json' % db_type) as f:
         credential = json.load(f)
 
-    content = {"prop": db_type, "label": STANDARD.get(db_type, db_type), "db_columns": column['database'],
+    content = {"prop": db_type, "label": NAME.get(db_type, db_type), "db_columns": column['database'],
                "tb_columns": column['table'],
                "databases": [i for i in credential]}
 
@@ -75,7 +78,7 @@ def make_app():
     return tornado.web.Application([
         (r'/list/', Retrieve),
         (r'/', Index),
-        (r'/database/add/', dbAdd),
+        (r'/database/add/', DbAdd),
     ],
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
         static_path=os.path.join(os.path.dirname(__file__), "static"),
