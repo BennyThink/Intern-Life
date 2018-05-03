@@ -19,7 +19,7 @@ ERROR = {1007: 'ProgrammingError 表已存在',
 class MySQLAPI:
     def __init__(self, host, port, user, password, database):
         try:
-            self.con = pymysql.connect(host=host, port=int(port), user=user, password=password)
+            self.con = pymysql.connect(host=host, port=port, user=user, password=password)
             self.cur = self.con.cursor()
             self.cur.execute('CREATE DATABASE %s' % database)
             self.err_code = '0'
@@ -28,8 +28,13 @@ class MySQLAPI:
             self.err_code = e[0]
             self.err_msg = ERROR.get(e[0], e[1])
 
-    # def __del__(self):
-    #     self.con.close()
+    def __del__(self):
+        # TODO: Pythonic?
+        try:
+            self.cur.close()
+            self.con.close()
+        except AttributeError:
+            pass
 
     def query(self, sql, param=None):
         self.cur.execute(sql, param)
@@ -38,13 +43,20 @@ class MySQLAPI:
 
 class MongoAPI:
     def __init__(self, host, port, user, password, database, auth):
-        self.mongo_client = pymongo.MongoClient(host=host, port=port, username=user, password=password,
-                                                authMechanism=auth)
-        self.db = self.mongo_client[database]
+
+        try:
+            self.mongo_client = pymongo.MongoClient(host=host, port=port, username=user, password=password,
+                                                    authMechanism=auth, serverSelectionTimeoutMS=2)
+            self.mongo_client.admin.command('ismaster')
+            self.db = self.mongo_client[database]
+            self.err_code = '0'
+            self.err_msg = '添加成功'
+        except Exception as e:
+            self.err_code = '1'
+            self.err_msg = e.message
 
     def __del__(self):
-        self.mongo_client.close()
-
-    def query(self, sql, param=None):
-        self.cur.execute(sql, param)
-        return self.cur.fetchall()
+        try:
+            self.mongo_client.close()
+        except AttributeError:
+            pass

@@ -8,6 +8,7 @@
 __author__ = 'Benny <benny@bennythink.com>'
 
 import json
+import logging
 import os
 
 import tornado.autoreload
@@ -22,11 +23,15 @@ NAME = dict(mysql='MySQL', mongo='MongoDB', elasticsearch='ElasticSearch', postg
             mariadb='MariaDB', mssql='MS SQL Server', cassandra='Cassandra', redis='Redis')
 
 
+# logging.basicConfig(level=logging.INFO)
+
+
 class Retrieve(tornado.web.RequestHandler):
 
     def get(self):
         self.set_header("Content-Type", "application/json")
         db_config_dir = os.listdir(PATH + '/config')
+        print('Sending table data')
         self.write(make_json(db_config_dir))
 
 
@@ -34,21 +39,37 @@ class DbAdd(tornado.web.RequestHandler):
 
     def post(self):
         d = json.loads(self.request.body)
-        # db_config_dir = os.listdir(PATH + '/config')
         if d['db_type'] == 'mongo':
-            try:
-                database = db.MongoAPI(d['host'], d['port'], d['username'], d['password'], d['database'], d['method'])
-            except:
-                self.set_status(400)
+            database = db.MongoAPI(d['host'], int(d['port']), d['username'], d['password'], d['database'], d['method'])
+            if database.err_code == '0':
+                _add_credential(d)
+            self.write(json.dumps({'status': database.err_code, 'message': database.err_msg}))
+
         elif d['db_type'] == 'mysql':
-            try:
-                database = db.MySQLAPI(d['host'], d['port'], d['username'], d['password'], d['database'])
-            except:
-                self.set_status(400)
+            database = db.MySQLAPI(d['host'], int(d['port']), d['username'], d['password'], d['database'])
+            if database.err_code == '0':
+                _add_credential(d)
+            self.write(json.dumps({'status': database.err_code, 'message': database.err_msg}))
 
         elif d['db_type'] == 'redis':
-            database = db.MySQLAPI(d['host'], d['port'], d['username'], d['password'], d['database'])
+            database = db.MySQLAPI(d['host'], int(d['port']), d['username'], d['password'], d['database'])
+            if database.err_code == '0':
+                _add_credential(d)
             self.write(json.dumps({'status': database.err_code, 'message': database.err_msg}))
+
+
+def _add_credential(data):
+    db_folder = data['db_type']
+    with open(u'config/%s/credential.json' % db_folder, 'r') as f:
+        old = json.load(f)
+
+    data.pop('db_type')
+    data['tables'] = []
+    data['white_list'] = []
+    old.append(data)
+
+    with open(u'config/%s/credential.json' % db_folder, 'w') as f:
+        f.write(json.dumps(old, ensure_ascii=False).encode('utf-8'))
 
 
 class Index(tornado.web.RequestHandler):

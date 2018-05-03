@@ -362,19 +362,30 @@
             },
 
             addDbAction() {
+
+
                 dbRequest = {};
                 for (var i = 0; i < this.dataModel.length; i++)
                     dbRequest[this.dataModel[i].value2] = this.dataModel[i].value1
                 dbRequest['db_type'] = app.activeName;
-
+                console.log(11111111111, dbRequest)
                 msg = this.$message;
                 axios.post('/database/add/', dbRequest)
                     .then(function (response) {
-
-                        if (response.data.status === 0)
+                        if (response.data.status === '0') {
                             msg.success('添加成功');
-                        else
+                            app.dialogAddDB = false;
+                            app.tableData.push(dbRequest);
+
+                            // axios.get('http://127.0.0.1:8888/list/').then(function (res) {app.apiData=res.data});
+                            // app.handleClick({'name': dbRequest['db_type']});
+                            // app.activeName = dbRequest['db_type'];
+
+                        }
+                        else {
                             msg.error('添加失败，错误码：' + response.data.status + ' 错误信息：' + response.data.message);
+
+                        }
                     })
                     .catch(function (error) {
                         msg.error('哎呀w(ﾟДﾟ)w');
@@ -423,28 +434,32 @@
         }
     });
 
+    function init() {
+        axios.get('http://127.0.0.1:8888/list/').then(function (res) {
+            app.apiData = res.data;
+            temp = [];
+            app.apiData.forEach(function (d) {
 
-    axios.get('http://127.0.0.1:8888/list/').then(function (res) {
-        app.apiData = res.data;
-        temp = [];
-        app.apiData.forEach(function (d) {
-            temp.push({
-                "prop": d.prop,
-                "label": d.label
+                temp.push({
+                    "prop": d.prop,
+                    "label": d.label
+                });
             });
+
+            app.tabs = temp;
+            app.activeName = app.apiData[0].prop;
+            app.db_columns = app.apiData[0].db_columns;
+            app.tb_columns = app.apiData[0].tb_columns;
+            app.tableData = app.apiData[0].databases;
+
+            for (var i = 0; i < app.db_columns.length; i++) {
+                app.dataModel.push({value1: '', value2: app.db_columns[i].prop});
+            }
+
         });
+    }
 
-        app.tabs = temp;
-        app.activeName = app.apiData[0].prop;
-        app.db_columns = app.apiData[0].db_columns;
-        app.tb_columns = app.apiData[0].tb_columns;
-        app.tableData = app.apiData[0].databases;
-
-        for (var i = 0; i < app.db_columns.length; i++) {
-            app.dataModel.push({value1: '', value2: app.db_columns[i].prop});
-        }
-
-    });
+    init()
 
 </script>
 </html>
