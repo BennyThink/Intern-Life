@@ -8,7 +8,6 @@
 __author__ = 'Benny <benny@bennythink.com>'
 
 import json
-import logging
 import os
 
 import tornado.autoreload
@@ -60,15 +59,16 @@ class DbAdd(tornado.web.RequestHandler):
 
 def _add_credential(data):
     db_folder = data['db_type']
-    with open(u'config/%s/credential.json' % db_folder, 'r') as f:
+    # TODO: truncate or open two times with r/w mode?
+    with open(u'config/%s/credential.json' % db_folder, 'r+') as f:
         old = json.load(f)
+        data.pop('db_type')
+        data['tables'] = []
+        data['white_list'] = []
+        old.append(data)
 
-    data.pop('db_type')
-    data['tables'] = []
-    data['white_list'] = []
-    old.append(data)
-
-    with open(u'config/%s/credential.json' % db_folder, 'w') as f:
+        f.seek(0)
+        f.truncate()
         f.write(json.dumps(old, ensure_ascii=False).encode('utf-8'))
 
 
