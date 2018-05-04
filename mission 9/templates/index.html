@@ -49,75 +49,39 @@
                     </div>
                 </el-dialog>
 
-                <el-dialog title="增加表信息" :visible.sync="dialogAddTable">
-                    <div style="display:inline-block;margin-bottom: 0.2em">
-                        表名
-                        <el-input v-model="input"></el-input>
-                    </div>
 
-                    <div style="display:inline-block;margin-bottom: 0.2em">
-                        注释
-                        <el-input v-model="input"></el-input>
-                    </div>
+                <el-dialog
+                        title="增加表"
+                        :visible.sync="dialogAddTable"
+                        width="30%">
 
-                    <br>
-                    <el-row class="demo-autocomplete">
+                    <el-form :inline="true" label-width="100px">
 
-                        <el-col :span="7">
-                            <div style="display:inline-block;margin-bottom: 0.2em">
-                                <div class="sub-title">列名称</div>
-                                <el-input v-model="input"></el-input>
-                            </div>
-                        </el-col>
+                        <el-form-item label="数据库：">
+                            <el-input
+                                    v-model="database"
+                                    :disabled="true"></el-input>
+                        </el-form-item>
 
-                        <el-col :span="7">
-                            <div class="sub-title">数据类型</div>
-                            <el-autocomplete
-                                    class="inline-input"
-                                    v-model="selectDataType"
-                                    :fetch-suggestions="querySearch"
-                                    placeholder="请输入内容"
-                                    :trigger-on-focus="false"
+                        <el-form-item label="表名称：">
+                            <el-input v-model="table_name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="映射名称：">
+                            <el-input v-model="map_name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="描述：">
+                            <el-input v-model="description"></el-input>
+                        </el-form-item>
 
-                            ></el-autocomplete>
-                        </el-col>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
 
-                        <el-col :span="7">
-                            <div style="display:inline-block;margin-bottom: 0.2em">
-                                <div class="sub-title">默认</div>
-                                <el-input v-model="input"></el-input>
-                            </div>
-                        </el-col>
-
-                        <el-col :span="1">
-                            <div style="display:inline-block;margin-bottom: 0.2em">
-                                <div class="sub-title">&nbsp;</div>
-                                <el-button type="primary" plain style="display: inline" icon="el-icon-plus"
-                                           @click="addColumnAction"></el-button>
-                            </div>
-                        </el-col>
-
-                    </el-row>
-
-
-                    <el-checkbox-group v-model="checkList">
-                        <el-checkbox label="非空"></el-checkbox>
-                        <el-checkbox label="自增"></el-checkbox>
-                        <el-checkbox label="唯一"></el-checkbox>
-                        <el-checkbox label="主键"></el-checkbox>
-                    </el-checkbox-group>
-                    SQL语句
-                    <el-input
-                            type="textarea"
-                            :rows="5"
-                            placeholder="CREATE TABLE ... "
-                            v-model="sqlScript">
-                    </el-input>
-
-                    <div slot="footer" class="dialog-footer">
+                         <div slot="footer" class="dialog-footer">
                         <el-button @click="dialogAddTable = false">取 消</el-button>
                         <el-button type="primary" @click="addTableAction">确 定</el-button>
                     </div>
+
+  </span>
                 </el-dialog>
 
 
@@ -240,7 +204,15 @@
             sqlScript: '',
             checkList: [],
             apiData: [],
-            dataModel: []
+            dataModel: [],
+            database: '',
+            table_name: '',
+            map_name: '',
+            description: '',
+            data: {
+                "server": [],
+                "tables": []
+            }
 
         },
 
@@ -278,9 +250,31 @@
                 this.input_password = ''
             },
 
-            handleAdd(index, row) {
-                console.log(index, row);
+            handleAdd(form) {
+
                 this.dialogAddTable = true;
+
+                this.data = {
+                    "server": [],
+                    "tables": []
+                };
+
+                index = [];
+                for (var i = 0; i < app.db_columns.length; i++) {
+                    if (app.db_columns[i].prop === 'database' || app.db_columns[i].prop === 'host' || app.db_columns[i].prop === 'port')
+                        index.push(i)
+                }
+                if (form.path[2].tagName === 'TR')
+                    order = 2;
+                else
+                    order = 3;
+                for (i = 0; i < index.length; i++) {
+                    this.data.server.push(form.path[order].previousSibling.childNodes[index[i] + 1].textContent)
+                }
+
+                this.database = this.data.server[0];
+
+
             },
             handleEdit(index, row) {
                 console.log(index, row);
@@ -368,7 +362,7 @@
                 for (var i = 0; i < this.dataModel.length; i++)
                     dbRequest[this.dataModel[i].value2] = this.dataModel[i].value1
                 dbRequest['db_type'] = app.activeName;
-                console.log(11111111111, dbRequest)
+
                 msg = this.$message;
                 axios.post('/database/add/', dbRequest)
                     .then(function (response) {
@@ -394,7 +388,35 @@
 
             },
             addTableAction() {
-                this.$message.success('增加表');
+                msg = this.$message;
+                this.data.tables = {
+                    "map_name": this.map_name,
+                    "table_name": this.table_name,
+                    "description": this.description
+                };
+                this.data['db_type'] = app.activeName;
+                axios.post('/table/add/', this.data)
+                    .then(function (response) {
+                        if (response.data.status === '0') {
+                            msg.success(response.data.message);
+                            app.dialogAddTable = false;
+                            //添加进去？？？我上哪知道是0还是1还是2还是3啊,呃，后端返回？
+                            app.tableData[response.data.index].tables.push(app.data.tables);
+
+                        }
+                        else {
+                            msg.error('添加失败，错误码：');
+
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        msg.error('哎呀w(ﾟДﾟ)w');
+
+                    });
+
+                //this.$message.success('增加表');
+
             },
             addColumnAction() {
                 this.sqlScript = '啊哈哈哈哈' + this.checkList

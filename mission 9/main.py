@@ -22,9 +22,6 @@ NAME = dict(mysql='MySQL', mongo='MongoDB', elasticsearch='ElasticSearch', postg
             mariadb='MariaDB', mssql='MS SQL Server', cassandra='Cassandra', redis='Redis')
 
 
-# logging.basicConfig(level=logging.INFO)
-
-
 class Retrieve(tornado.web.RequestHandler):
 
     def get(self):
@@ -55,6 +52,36 @@ class DbAdd(tornado.web.RequestHandler):
             if database.err_code == '0':
                 _add_credential(d)
             self.write(json.dumps({'status': database.err_code, 'message': database.err_msg}))
+
+
+class TableAdd(tornado.web.RequestHandler):
+
+    def post(self):
+        d = json.loads(self.request.body)
+        index = _add_table(d)
+        self.write(json.dumps({'status': '0', 'index': index, 'message': '写入json文件成功'}))
+
+
+def _add_table(data):
+    i = 0
+    db_folder = data['db_type']
+    with open(u'config/%s/credential.json' % db_folder, 'r+') as f:
+        old = json.load(f)
+        data.pop('db_type')
+
+        for item in old:
+            if item['database'] == data['server'][0] and item['host'] == data['server'][1] and item['port'] == \
+                    data['server'][2]:
+                item['tables'].append(data['tables'])
+                break
+            else:
+                i += 1
+
+        f.seek(0)
+        f.truncate()
+        f.write(json.dumps(old, ensure_ascii=False).encode('utf-8'))
+
+        return i
 
 
 def _add_credential(data):
@@ -100,6 +127,7 @@ def make_app():
         (r'/list/', Retrieve),
         (r'/', Index),
         (r'/database/add/', DbAdd),
+        (r'/table/add/', TableAdd),
     ],
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
         static_path=os.path.join(os.path.dirname(__file__), "static"),
@@ -108,6 +136,10 @@ def make_app():
 
 
 if __name__ == '__main__':
+    # test = {u'tables': {u'map_name': u'2', u'table_name': u'1', u'description': u'3'}, u'db_type': u'redis',
+    #         u'server': [u'oooo', u'127.0.0.1', u'3306']}
+    #
+    # _add_table(test)
     app = make_app()
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
