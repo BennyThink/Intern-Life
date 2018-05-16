@@ -241,13 +241,11 @@
             },
 
             showDbDialog() {
-                //alert('添加');
+                this.dataModel.forEach(function (e) {
+                    e.value1 = '';
+                });
                 this.dialogAddDB = true;
-                this.input_db = '';
-                this.input_ip = '';
-                this.input_port = '';
-                this.input_username = '';
-                this.input_password = ''
+
             },
 
             handleAdd(form) {
