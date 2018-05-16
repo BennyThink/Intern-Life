@@ -14,7 +14,7 @@ import tornado.escape
 import tornado.ioloop
 import tornado.web
 
-import db
+from mission9 import db
 
 PATH = os.path.split(os.path.realpath(__file__))[0]
 NAME = dict(mysql='MySQL', mongo='MongoDB', elasticsearch='ElasticSearch', postgresql='PostgreSQL',
@@ -64,7 +64,7 @@ class TableAdd(tornado.web.RequestHandler):
 def _add_table(data):
     i = 0
     db_folder = data['db_type']
-    with open(u'config/%s/credential.json' % db_folder, 'r+') as f:
+    with open('config/%s/credential.json' % db_folder, 'r+', encoding='utf-8') as f:
         old = json.load(f)
         data.pop('db_type')
 
@@ -78,14 +78,14 @@ def _add_table(data):
 
         f.seek(0)
         f.truncate()
-        f.write(json.dumps(old, ensure_ascii=False).encode('utf-8'))
+        f.write(json.dumps(old, ensure_ascii=False))
 
         return i
 
 
 def _add_credential(data):
     db_folder = data['db_type']
-    with open(u'config/%s/credential.json' % db_folder, 'r+') as f:
+    with open('config/%s/credential.json' % db_folder, 'r+', encoding='utf-8') as f:
         old = json.load(f)
         data.pop('db_type')
         data['tables'] = []
@@ -94,19 +94,19 @@ def _add_credential(data):
 
         f.seek(0)
         f.truncate()
-        f.write(json.dumps(old, ensure_ascii=False).encode('utf-8'))
+        f.write(json.dumps(old, ensure_ascii=False))
 
 
 class Index(tornado.web.RequestHandler):
 
     def get(self):
-        self.finish(open('templates/index.html').read())
+        self.finish(open('templates/index.html', encoding='utf-8').read())
 
 
 def _make_json(db_type):
-    with open(PATH + '/config/%s/column.json' % db_type) as f:
+    with open(PATH + '/config/%s/column.json' % db_type, encoding='utf-8') as f:
         column = json.load(f)
-    with open(PATH + '/config/%s/credential.json' % db_type) as f:
+    with open(PATH + '/config/%s/credential.json' % db_type, encoding='utf-8') as f:
         credential = json.load(f)
 
     content = {"prop": db_type, "label": NAME.get(db_type, db_type), "db_columns": column['database'],

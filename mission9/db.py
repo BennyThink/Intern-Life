@@ -26,8 +26,8 @@ class MySQLAPI:
             self.err_code = '0'
             self.err_msg = '添加成功'
         except Exception as e:
-            self.err_code = e[0]
-            self.err_msg = ERROR.get(e[0], e[1])
+            self.err_code = e.args[0]
+            self.err_msg = ERROR.get(e.args[0], e.args[1])
 
     def __del__(self):
         # TODO: Pythonic?
@@ -47,7 +47,6 @@ class MongoAPI:
         if not auth:
             auth = 'SCRAM-SHA-1'
         try:
-            # print host, port, len(user), len(password), database, auth
             if user and password:
                 self.mongo_client = pymongo.MongoClient(host=host, port=port, username=user, password=password,
                                                         authMechanism=auth, serverSelectionTimeoutMS=2)
@@ -61,7 +60,7 @@ class MongoAPI:
             self.err_msg = '添加成功'
         except Exception as e:
             self.err_code = '1'
-            self.err_msg = e.message
+            self.err_msg = e.args
 
     def __del__(self):
         try:

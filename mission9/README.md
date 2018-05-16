@@ -1,6 +1,7 @@
 Intern-Life
 # My intern assignments at XXX.
 
+from now on all projects should be developed under Python 3.
 ## Mission 
 * Accomplished on 
 * Modified on 
