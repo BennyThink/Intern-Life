@@ -10,7 +10,6 @@ __author__ = 'Benny <benny@bennythink.com>'
 import json
 import os
 
-import tornado.autoreload
 import tornado.escape
 import tornado.ioloop
 import tornado.web

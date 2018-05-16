@@ -367,7 +367,9 @@
                         if (response.data.status === '0') {
                             msg.success('添加成功');
                             app.dialogAddDB = false;
+                            dbRequest['tables'] = [];
                             app.tableData.push(dbRequest);
+
 
                             // axios.get('http://127.0.0.1:8888/list/').then(function (res) {app.apiData=res.data});
                             // app.handleClick({'name': dbRequest['db_type']});
@@ -396,10 +398,13 @@
                 this.data['db_type'] = app.activeName;
                 axios.post('/table/add/', this.data)
                     .then(function (response) {
+
                         if (response.data.status === '0') {
                             msg.success(response.data.message);
                             app.dialogAddTable = false;
                             //添加进去？？？我上哪知道是0还是1还是2还是3啊,呃，后端返回？
+                            // 刚刚添加完数据库，再添加表，会有push undefined的报错，但实际上写入是成功的。
+                            // app.tableData[3].tables
                             app.tableData[response.data.index].tables.push(app.data.tables);
 
                         }
@@ -409,12 +414,10 @@
                         }
                     })
                     .catch(function (error) {
-                        console.log(error)
-                        msg.error('哎呀w(ﾟДﾟ)w');
-
+                        console.log(error);
+                        msg.error('哎呀w(ﾟДﾟ)w好像出现了一个奇怪的错误', error);
                     });
 
-                //this.$message.success('增加表');
 
             },
             addColumnAction() {
