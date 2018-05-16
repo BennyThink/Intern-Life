@@ -10,10 +10,11 @@ __author__ = 'Benny <benny@bennythink.com>'
 import pymysql
 import pymongo
 
-ERROR = {1007: 'ProgrammingError 表已存在',
-         1064: ' ProgrammingError 表名不合法',
-         2003: 'OperationalError 连接被拒绝',
-         1045: 'OperationalError 访问拒绝，错误的用户名或密码'}
+ERROR = {
+    1064: '数据库名名不合法',
+    2003: '连接被拒绝，MySQL可能未开启或端口号错误',
+    1045: '访问被拒绝，错误的用户名或密码',
+    1049: '未知数据库，数据库不存在'}
 
 
 class MySQLAPI:
@@ -21,7 +22,7 @@ class MySQLAPI:
         try:
             self.con = pymysql.connect(host=host, port=port, user=user, password=password)
             self.cur = self.con.cursor()
-            self.cur.execute('CREATE DATABASE %s' % database)
+            self.cur.execute('USE %s' % database)
             self.err_code = '0'
             self.err_msg = '添加成功'
         except Exception as e:
@@ -43,11 +44,18 @@ class MySQLAPI:
 
 class MongoAPI:
     def __init__(self, host, port, user, password, database, auth):
-
+        if not auth:
+            auth = 'SCRAM-SHA-1'
         try:
-            self.mongo_client = pymongo.MongoClient(host=host, port=port, username=user, password=password,
-                                                    authMechanism=auth, serverSelectionTimeoutMS=2)
-            self.mongo_client.admin.command('ismaster')
+            # print host, port, len(user), len(password), database, auth
+            if user and password:
+                self.mongo_client = pymongo.MongoClient(host=host, port=port, username=user, password=password,
+                                                        authMechanism=auth, serverSelectionTimeoutMS=2)
+            else:
+                self.mongo_client = pymongo.MongoClient(host=host, port=port, serverSelectionTimeoutMS=2)
+            # TODO：暂时这样
+            # self.mongo_client.admin.command('ismaster')
+            self.mongo_client.database_names()
             self.db = self.mongo_client[database]
             self.err_code = '0'
             self.err_msg = '添加成功'

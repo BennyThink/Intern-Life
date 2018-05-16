@@ -6,6 +6,13 @@ Intern-Life
 * Modified on 
 * Duration: 
 
+2018-05-15
+测试schema是否存在  而不是添加。 
+mongo以及用户名密码等待
+
+添加 清空原有输入框
+
+
 
 ## Description
 一个前后端结合的页面

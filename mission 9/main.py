@@ -86,7 +86,6 @@ def _add_table(data):
 
 def _add_credential(data):
     db_folder = data['db_type']
-    # TODO: truncate or open two times with r/w mode?
     with open(u'config/%s/credential.json' % db_folder, 'r+') as f:
         old = json.load(f)
         data.pop('db_type')

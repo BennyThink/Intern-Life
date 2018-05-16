@@ -251,7 +251,7 @@
             },
 
             handleAdd(form) {
-
+                this.table_name = this.map_name = this.description = '';
                 this.dialogAddTable = true;
 
                 this.data = {
@@ -382,12 +382,13 @@
                         }
                     })
                     .catch(function (error) {
-                        msg.error('哎呀w(ﾟДﾟ)w');
+                        msg.error('请输入正确的数据库信息');
 
                     });
 
             },
             addTableAction() {
+
                 msg = this.$message;
                 this.data.tables = {
                     "map_name": this.map_name,
