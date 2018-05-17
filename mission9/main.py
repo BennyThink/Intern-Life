@@ -3,12 +3,14 @@
 
 # Intern-Life - main.py
 # 2018/04/04 11:27
-# 
+#
+from typing import Any, Union
 
 __author__ = 'Benny <benny@bennythink.com>'
 
 import json
 import os
+import re
 
 import tornado.escape
 import tornado.ioloop
@@ -104,6 +106,11 @@ class Index(tornado.web.RequestHandler):
 
 
 def _make_json(db_type):
+    """
+
+    :param db_type:
+    :return: dict
+    """
     with open(PATH + '/config/%s/column.json' % db_type, encoding='utf-8') as f:
         column = json.load(f)
     with open(PATH + '/config/%s/credential.json' % db_type, encoding='utf-8') as f:
@@ -113,11 +120,18 @@ def _make_json(db_type):
                "tb_columns": column['table'],
                "databases": [i for i in credential]}
 
-    return content
+    # filter goes here, content is the data.
+    return table_filter(content, True)
+    # return content
 
 
 def make_json(db_folder):
-    return json.dumps([_make_json(i) for i in db_folder], ensure_ascii=False).encode('utf-8')
+    """
+
+    :param db_folder:
+    :return: str
+    """
+    return json.dumps([_make_json(i) for i in db_folder], ensure_ascii=False)
 
 
 def make_app():
@@ -133,11 +147,31 @@ def make_app():
     )
 
 
+def table_filter(data, enable=True):
+    if not enable:
+        return data
+
+    for item in data['databases']:
+        # item a whole database
+        # print(item['tables'])
+        new = []
+        for tb in item['tables']:
+
+            for regex in item['white_list']:
+                # print(regex)
+                if re.compile(regex).findall(tb['table_name']):
+                    # find
+
+                    new.append(tb)
+                    item['tables'] = new
+                    # item['tables'] = [tb]
+                    # print(item)
+    # data seems right...? only the last data. okay,right now.
+
+    return data
+
+
 if __name__ == '__main__':
-    # test = {u'tables': {u'map_name': u'2', u'table_name': u'1', u'description': u'3'}, u'db_type': u'redis',
-    #         u'server': [u'oooo', u'127.0.0.1', u'3306']}
-    #
-    # _add_table(test)
     app = make_app()
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
